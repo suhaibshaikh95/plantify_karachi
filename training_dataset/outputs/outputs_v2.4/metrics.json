@@ -1,0 +1,62 @@
+{
+  "XGBoost": {
+    "accuracy": 0.9998655462184874,
+    "precision": 0.9997539975399754,
+    "recall": 0.9999507898233355,
+    "f1": 0.9998523839984255,
+    "roc_auc": 0.9999999331823638,
+    "top6_overlap": 0.5063492063492063,
+    "confusion_matrix": [
+      [
+        24299,
+        5
+      ],
+      [
+        1,
+        20320
+      ]
+    ],
+    "top10_features": [
+      {
+        "feature": "ph_opt_max",
+        "importance": 0.15049372613430023
+      },
+      {
+        "feature": "do_not_plant",
+        "importance": 0.1452215164899826
+      },
+      {
+        "feature": "site_salinity",
+        "importance": 0.11136686056852341
+      },
+      {
+        "feature": "salt_tolerance",
+        "importance": 0.10676626116037369
+      },
+      {
+        "feature": "needs_large_space",
+        "importance": 0.08981043100357056
+      },
+      {
+        "feature": "water_need",
+        "importance": 0.07525146007537842
+      },
+      {
+        "feature": "site_space_large",
+        "importance": 0.0566820427775383
+      },
+      {
+        "feature": "guide_good",
+        "importance": 0.03864865377545357
+      },
+      {
+        "feature": "water_days",
+        "importance": 0.03646465018391609
+      },
+      {
+        "feature": "low_maintenance",
+        "importance": 0.03193433955311775
+      }
+    ]
+  }
+}
