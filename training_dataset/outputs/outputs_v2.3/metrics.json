@@ -1,0 +1,122 @@
+{
+  "RandomForest": {
+    "accuracy": 0.9986330532212885,
+    "precision": 0.9975880586147265,
+    "recall": 0.9996351862830043,
+    "f1": 0.998610573309341,
+    "roc_auc": 0.9999882399173556,
+    "top6_overlap": 0.4111111111111111,
+    "confusion_matrix": [
+      [
+        22643,
+        53
+      ],
+      [
+        8,
+        21921
+      ]
+    ],
+    "top10_features": [
+      {
+        "feature": "site_salinity",
+        "importance": 0.25692782813745707
+      },
+      {
+        "feature": "water_days",
+        "importance": 0.1286848546531904
+      },
+      {
+        "feature": "water_need",
+        "importance": 0.06831234039954348
+      },
+      {
+        "feature": "salt_tolerance",
+        "importance": 0.05645133163051387
+      },
+      {
+        "feature": "ph_opt_max",
+        "importance": 0.04452764783776735
+      },
+      {
+        "feature": "needs_large_space",
+        "importance": 0.029626627789368597
+      },
+      {
+        "feature": "guide_good",
+        "importance": 0.025809265807441556
+      },
+      {
+        "feature": "do_not_plant",
+        "importance": 0.025717198287579887
+      },
+      {
+        "feature": "temp_opt_max",
+        "importance": 0.023862099387191735
+      },
+      {
+        "feature": "temp_abs_min",
+        "importance": 0.023786062957692103
+      }
+    ]
+  },
+  "XGBoost": {
+    "accuracy": 0.9998431372549019,
+    "precision": 0.9997264520835233,
+    "recall": 0.9999543982853756,
+    "f1": 0.9998404121925085,
+    "roc_auc": 0.9999997870205433,
+    "top6_overlap": 0.5361904761904762,
+    "confusion_matrix": [
+      [
+        22690,
+        6
+      ],
+      [
+        1,
+        21928
+      ]
+    ],
+    "top10_features": [
+      {
+        "feature": "do_not_plant",
+        "importance": 0.17950911819934845
+      },
+      {
+        "feature": "site_salinity",
+        "importance": 0.12598177790641785
+      },
+      {
+        "feature": "salt_tolerance",
+        "importance": 0.12043551355600357
+      },
+      {
+        "feature": "needs_large_space",
+        "importance": 0.10532070696353912
+      },
+      {
+        "feature": "water_need",
+        "importance": 0.0957670658826828
+      },
+      {
+        "feature": "site_space_large",
+        "importance": 0.06124463677406311
+      },
+      {
+        "feature": "ph_opt_max",
+        "importance": 0.05253561586141586
+      },
+      {
+        "feature": "water_days",
+        "importance": 0.04156995192170143
+      },
+      {
+        "feature": "guide_good",
+        "importance": 0.029560143128037453
+      },
+      {
+        "feature": "poisonous",
+        "importance": 0.02541138231754303
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+scientific_name,common_name,trait_confidence,salt_tolerance,water_need,ph_opt_min,ph_opt_max,temp_opt_min,temp_opt_max,needs_large_space,poisonous
+Ficus virens,White fig / Pilkhan,medium,1.0,3.0,5.5,7.5,20.0,38.0,1,0
+Albizia julibrissin,Silk tree,medium,1.0,3.0,6.0,7.5,15.0,30.0,0,0
+Ficus microcarpa,Chinese banyan,medium,2.0,3.0,5.5,7.5,20.0,35.0,1,0
+Ficus rubiginosa,Port Jackson fig,low,1.0,3.0,5.5,7.5,15.0,32.0,1,0
+Ziziphus jujuba,Chinese jujube,medium,1.0,1.0,6.0,8.0,20.0,35.0,0,0
+Crateva adansonii,Barna / Sacred garlic pear,low,1.0,3.0,6.0,8.0,22.0,38.0,0,0
+Ficus racemosa,Gular / Cluster fig,medium,0.0,5.0,6.0,7.5,20.0,38.0,1,0
+Erythrina suberosa,Corky coral tree,low,1.0,1.0,6.0,7.5,20.0,35.0,0,0
+Roystonea regia,Royal palm,medium,1.0,5.0,6.0,7.5,22.0,35.0,0,0
+Polyalthia longifolia,False ashoka / Ashok,medium,1.0,3.0,6.0,7.5,20.0,35.0,0,0
+Cordia myxa,Lasoora,medium,1.0,1.0,6.0,8.0,22.0,38.0,0,0
+Tabebuia heterophylla,Pink trumpet tree,medium,2.0,3.0,6.0,7.5,20.0,35.0,0,0
+Ficus benjamina,Weeping fig,medium,1.0,3.0,6.0,7.5,18.0,32.0,1,0
+Ficus amplissima,Bat fig,low,1.0,1.0,5.5,7.5,22.0,38.0,1,0
+Livistona chinensis,Chinese fan palm,medium,1.0,3.0,6.0,7.5,18.0,32.0,0,0
+Ficus rumphii,Mock bodhi tree,low,1.0,3.0,6.0,7.5,22.0,38.0,1,0
+Millingtonia hortensis,Indian cork tree / Akash neem,medium,0.0,3.0,6.0,7.5,20.0,35.0,0,0
+Cordia gharaf,Gondi / Cordia sinensis,medium,2.0,1.0,6.5,8.5,24.0,40.0,0,0
+Fernandoa adenophylla,Fernandoa / Marodphali,low,0.0,3.0,6.0,7.5,22.0,35.0,0,0
+Washingtonia robusta,Mexican fan palm,medium,2.0,1.0,6.0,8.0,20.0,40.0,0,0
+Nerium oleander,common oleander,medium,2.0,1.0,6.0,8.0,18.0,38.0,0,1
+Cordia macleodii,Dahipalas,low,0.0,1.0,6.0,7.5,22.0,36.0,0,0
+Saraca asoca,Ashoka (true),medium,0.0,5.0,5.5,7.0,20.0,32.0,0,0
+Ficus lyrata,Fiddle-leaf fig,medium,0.0,3.0,6.0,7.0,18.0,30.0,0,0
+Mimosa hamata,Hooked mimosa (shrub),low,1.0,1.0,6.5,8.5,24.0,40.0,0,0
+Euphorbia caducifolia,Leafless milk hedge / Thor (shrub),medium,1.0,1.0,6.5,8.5,24.0,42.0,0,1
+Nannorrhops ritchiana,Mazari palm,medium,1.0,1.0,7.0,8.5,20.0,40.0,0,0
+Searsia lancea,African sumac / Karee,medium,1.0,1.0,6.0,8.0,15.0,35.0,0,0
+Tecomella undulata,Rohida / Desert teak,medium,1.0,1.0,7.0,8.5,25.0,42.0,0,0
+Ziziphus nummularia,Jhar beri (shrub),medium,1.0,1.0,7.0,8.5,25.0,42.0,0,0
+Quercus phellos,Willow oak,medium,0.0,3.0,4.5,6.5,10.0,30.0,0,0
