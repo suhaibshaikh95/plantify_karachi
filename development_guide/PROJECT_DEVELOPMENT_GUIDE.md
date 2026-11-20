@@ -14,7 +14,7 @@
 | **Phase 1** | Dataset Audit, Preprocessing & Model Benchmark | ✅ **COMPLETED** | **100%** |
 | **Phase 1.5** | Academic Reporting, Model Selection & Code Explanations | ✅ **COMPLETED** | **100%** |
 | **Phase 2** | FastAPI Backend & Hybrid Recommender Implementation | ⏳ **READY TO START** | **0%** |d
-| **Phase 3** | Responsive Modern Web Frontend Development | ⏸️ **PENDING** | **0%** |
+| **Phase 3** | Responsive Modern Web Frontend Development | ⏳ **IN PROGRESS** (works offline; viva tab waits on Phase 2) | **80%** |
 | **Phase 4** | End-to-End System Testing & FYP Viva Presentation Prep | ⏸️ **PENDING** | **0%** |
 
 ---
@@ -90,29 +90,31 @@
 
 ---
 
-### ⏸️ Phase 3: Responsive Modern Web Frontend (0% - Pending Phase 2)
-- [ ] **3.1 Frontend Foundation & Styling**
+### ⏳ Phase 3: Responsive Modern Web Frontend (80% - see `frontend/README.md`)
+> Built from the "Plantify Karachi UI" design (5 mobile screens). Runs without the backend using `frontend/engine.js`,
+> a JS port of the rule engine verified against all 221,000 training labels (0 mismatches). Uses the backend's XGBoost scores when Phase 2 is running.
+- [x] **3.1 Frontend Foundation & Styling**
   - Create modern, responsive layout (`frontend/index.html`, `frontend/style.css`, `frontend/app.js`).
   - Karachi green & urban nature aesthetic with dark/light glassmorphic card design.
-- [ ] **3.2 Location Selector & GPS Integration**
+- [x] **3.2 Location Selector & GPS Integration**
   - Dropdown of all 104 Karachi neighborhoods (Clifton, DHA, Gulshan, Malir, Korangi, etc.).
   - Coordinates / nearest-site auto-detection.
-- [ ] **3.3 Interactive Questionnaire Form**
+- [x] **3.3 Interactive Questionnaire Form**
   - Salinity selector (Normal, Low, High).
   - Space available (Pot, Balcony, Small Garden, Large Open Ground).
   - Watering frequency (Days per week).
   - Children & Pets toggle (Safety filter).
   - Planting purpose (Shade, Fruit, Ornamental, Carbon sequestration).
-- [ ] **3.4 Top 6 Plant Cards Display**
+- [x] **3.4 Top 6 Plant Cards Display**
   - High-resolution card per plant showing:
     * Common Name, Scientific Name, Urdu context.
     * XGBoost Suitability Percentage gauge (e.g. 98.4%).
     * Badges: *Native to Karachi*, *Drought Tolerant*, *Urban Heat Tolerant*, *Low Maintenance*.
     * Seasonal watering and soil care instructions.
-- [ ] **3.5 Explainability & Transparency Drawers**
+- [x] **3.5 Explainability & Transparency Drawers**
   - *"Why these plants?"* explanation breakdown.
   - *"Excluded Plants Drawer"*: Explicit list showing which species were eliminated and why (proving hybrid safety).
-- [ ] **3.6 Model Evaluation & Viva Defense Tab**
+- [ ] **3.6 Model Evaluation & Viva Defense Tab** *(waits on `GET /api/model/info` from Phase 2)*
   - Live interactive tab showing Random Forest vs XGBoost benchmark metrics, confusion matrix, and top feature importances for examiner presentation.
 
 ---
@@ -139,5 +141,6 @@
 | [`outputs/TRAINING_REPORT.md`](file:///Users/mac/Desktop/plantify-FYP1/outputs/TRAINING_REPORT.md) | Official academic training and limitations report | ✅ Done |
 | `backend/app/hybrid_engine.py` | Two-stage hybrid recommendation engine | ⏳ Next |
 | `backend/app/main.py` | FastAPI REST API endpoints | ⏳ Next |
-| `frontend/index.html` | Interactive web dashboard | ⏸️ Queued |
-| `frontend/app.js` | Frontend logic & API connection | ⏸️ Queued |
+| `frontend/index.html` | Interactive web app (5 screens) | ✅ Done |
+| `frontend/app.js` | Frontend logic & API connection | ✅ Done |
+| `frontend/engine.js` | Offline rule engine (JS port, parity-tested) | ✅ Done |

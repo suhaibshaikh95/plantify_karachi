@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAFAF7">
+<meta name="description" content="Plantify Karachi: the right plants for your plot. One photo, seven questions, six plants that will survive.">
+<title>Plantify Karachi</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232F6B3F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21V11'/%3E%3Cpath d='M12 11C12 6 8 3 4 3c0 5 3 8 8 8z'/%3E%3Cpath d='M12 14c0-4 3-7 8-7 0 4-3 7-8 7z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- 1 · Welcome -->
+  <section class="screen screen-welcome" id="screen-welcome" data-screen="welcome" hidden>
+    <header class="topbar">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V11"/><path d="M12 11C12 6 8 3 4 3c0 5 3 8 8 8z"/><path d="M12 14c0-4 3-7 8-7 0 4-3 7-8 7z"/></svg>
+        <span>Plantify</span>
+      </div>
+      <a href="#/results" class="text-link" id="saved-link" hidden>Saved plan</a>
+    </header>
+    <div class="hero">
+      <p class="eyebrow">Karachi only</p>
+      <h1 class="display">The right plants for your plot.</h1>
+      <p class="lead">Take one photo and answer seven quick questions. We check the soil, salt and climate of your spot and suggest six plants that will survive.</p>
+    </div>
+    <ol class="steps">
+      <li><span class="step-num">1</span>Upload a photo of the land</li>
+      <li><span class="step-num">2</span>Answer 7 simple questions</li>
+      <li><span class="step-num">3</span>Get your top 6 plants, with reasons</li>
+    </ol>
+    <a href="#/location" class="btn btn-primary">Get started</a>
+    <p class="fine center">No soil test or sensors needed</p>
+  </section>
+
+  <!-- 2 · Photo & location -->
+  <section class="screen" id="screen-location" data-screen="location" hidden>
+    <header class="navbar">
+      <a href="#/welcome" class="icon-btn" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+      <span class="nav-title">Step 1 of 3</span>
+      <span class="icon-btn" aria-hidden="true"></span>
+    </header>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="1" aria-label="Step 1 of 3"><div style="width:33%"></div></div>
+    <h1 class="title">Your plot</h1>
+    <p class="subtitle">A clear photo of the ground and where it is.</p>
+
+    <div class="photo" id="photo">
+      <label class="photo-empty" id="photo-empty" for="photo-input">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span class="photo-empty-title">Add a photo of the land</span>
+        <span class="photo-empty-sub">Take one now or choose from your gallery</span>
+      </label>
+      <img id="photo-img" alt="Your plot" hidden>
+      <div class="photo-chips" id="photo-chips" hidden>
+        <span class="chip-glass" id="photo-name"></span>
+        <span class="chip-glass" id="photo-gps"></span>
+      </div>
+      <label for="photo-input" class="photo-replace" id="photo-replace" hidden>Replace</label>
+      <input type="file" id="photo-input" accept="image/*" class="visually-hidden">
+    </div>
+
+    <p class="label">Location</p>
+    <div class="map-card">
+      <div class="map" id="map" aria-label="Map. Drag the pin or tap the map to set your plot."></div>
+      <div class="map-info">
+        <div>
+          <div class="map-place" id="place-name">Set your location</div>
+          <div class="map-coords" id="place-coords">Use a photo with GPS, your current location, or tap the map</div>
+        </div>
+        <button type="button" class="text-btn" id="move-pin">Move pin</button>
+      </div>
+    </div>
+    <button type="button" class="btn btn-outline" id="use-location">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+      Use my current location
+    </button>
+    <label class="select-wrap">
+      <span class="visually-hidden">Or choose your area</span>
+      <select id="site-select"><option value="">Or choose your area from the list</option></select>
+    </label>
+    <p class="msg" id="location-msg" role="status" aria-live="polite"></p>
+
+    <div class="spacer"></div>
+    <button type="button" class="btn btn-primary" id="location-continue" disabled>Continue</button>
+  </section>
+
+  <!-- 3 · Site questions -->
+  <section class="screen" id="screen-questions" data-screen="questions" hidden>
+    <header class="navbar">
+      <a href="#/location" class="icon-btn" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+      <span class="nav-title">Step 2 of 3</span>
+      <span class="icon-btn" aria-hidden="true"></span>
+    </header>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="2" aria-label="Step 2 of 3"><div style="width:66%"></div></div>
+    <h1 class="title">About your site</h1>
+    <p class="subtitle">Seven quick questions. Guess if you are not sure.</p>
+
+    <form id="questions-form" novalidate>
+      <fieldset class="q">
+        <legend>1. Signs of salt</legend>
+        <div class="yn-card">
+          <div class="yn-row" data-sign="crust"><span id="sign-crust">White crust on the soil?</span><div class="yn" role="group" aria-labelledby="sign-crust"><button type="button" data-v="yes">Yes</button><button type="button" data-v="no">No</button></div></div>
+          <div class="yn-row" data-sign="borewell"><span id="sign-borewell">Salty borewell water?</span><div class="yn" role="group" aria-labelledby="sign-borewell"><button type="button" data-v="yes">Yes</button><button type="button" data-v="no">No</button></div></div>
+          <div class="yn-row" data-sign="burnt"><span id="sign-burnt">Burnt leaf edges nearby?</span><div class="yn" role="group" aria-labelledby="sign-burnt"><button type="button" data-v="yes">Yes</button><button type="button" data-v="no">No</button></div></div>
+          <div class="yn-row" data-sign="sea"><span id="sign-sea">Within 2 km of the sea?</span><div class="yn" role="group" aria-labelledby="sign-sea"><button type="button" data-v="yes">Yes</button><button type="button" data-v="no">No</button></div></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="q" data-field="water_days">
+        <legend>2. Days you can water each week</legend>
+        <div class="chips"><button type="button" class="c" data-v="1">1</button><button type="button" class="c" data-v="2">2</button><button type="button" class="c" data-v="3">3</button><button type="button" class="c" data-v="5">5</button><button type="button" class="c" data-v="7">7</button></div>
+      </fieldset>
+
+      <fieldset class="q" data-field="space">
+        <legend>3. Space available</legend>
+        <div class="chips"><button type="button" class="c" data-v="small">Pot / balcony</button><button type="button" class="c" data-v="medium">Small yard</button><button type="button" class="c" data-v="large">Large open land</button></div>
+      </fieldset>
+
+      <fieldset class="q" data-field="care">
+        <legend>4. Care you can give</legend>
+        <div class="chips"><button type="button" class="c" data-v="rarely">Low</button><button type="button" class="c" data-v="few_times_week">Medium</button><button type="button" class="c" data-v="daily">High</button></div>
+      </fieldset>
+
+      <fieldset class="q" data-field="purpose">
+        <legend>5. Main purpose</legend>
+        <div class="chips"><button type="button" class="c" data-v="shade">Shade</button><button type="button" class="c" data-v="flowers">Flowers</button><button type="button" class="c" data-v="fruit">Fruit</button><button type="button" class="c" data-v="hedge">Hedge</button><button type="button" class="c" data-v="greenery">Greenery</button></div>
+      </fieldset>
+
+      <fieldset class="q" data-field="children_or_animals">
+        <legend>6. Children or animals use the site?</legend>
+        <div class="chips"><button type="button" class="c" data-v="1">Yes</button><button type="button" class="c" data-v="0">No</button></div>
+      </fieldset>
+
+      <fieldset class="q" data-field="budget">
+        <legend>7. Budget per plant</legend>
+        <div class="chips"><button type="button" class="c" data-v="under_500">Under Rs 500</button><button type="button" class="c" data-v="500_2000">Rs 500–2,000</button><button type="button" class="c" data-v="any">Any</button></div>
+      </fieldset>
+    </form>
+
+    <p class="msg" id="questions-msg" role="status" aria-live="polite"></p>
+    <div class="spacer"></div>
+    <button type="button" class="btn btn-primary" id="get-plants">Get my plants</button>
+  </section>
+
+  <!-- 4 · Results -->
+  <section class="screen" id="screen-results" data-screen="results" hidden>
+    <header class="navbar">
+      <a href="#/questions" class="icon-btn" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+      <span class="nav-title">Results</span>
+      <button type="button" class="icon-btn end" id="save-btn" aria-label="Save results on this device" aria-pressed="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg></button>
+    </header>
+    <div id="results-body" aria-live="polite"></div>
+  </section>
+
+  <!-- 5 · Ask about a plant -->
+  <section class="screen screen-chat" id="screen-chat" data-screen="chat" hidden>
+    <header class="navbar pad">
+      <a href="#/results" class="icon-btn" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+      <span class="nav-title strong">Ask about your plants</span>
+      <span class="icon-btn" aria-hidden="true"></span>
+    </header>
+    <div class="chat-log" id="chat-log" aria-live="polite"></div>
+    <div class="suggestions" id="suggestions"></div>
+    <form class="composer" id="chat-form">
+      <input id="chat-input" placeholder="Type a question" aria-label="Question" autocomplete="off">
+      <button type="submit" class="send" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </form>
+  </section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="engine.js"></script>
+<script src="exif.js"></script>
+<script src="api.js"></script>
+<script src="chat.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
