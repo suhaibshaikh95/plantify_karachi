@@ -1,29 +1,32 @@
 """
-Download one photo per plant from Wikimedia Commons into frontend/data/photos/.
+Download one photo per plant from iNaturalist into frontend/data/photos/.
 
     python frontend/scripts/fetch_photos.py               # plants with no photo yet
     python frontend/scripts/fetch_photos.py --limit 20    # at most 20 plants this run
     python frontend/scripts/fetch_photos.py --refresh     # download every photo again
     python frontend/scripts/fetch_photos.py --only "Azadirachta indica"
 
-For each plant it searches Wikimedia Commons by scientific name and keeps the best
-photo with a free licence (CC BY, CC BY-SA, CC0 or public domain), skipping herbarium
-sheets, drawings and maps. A hand-picked file in photo_overrides.json always wins.
+For each plant it finds the species on iNaturalist and takes a photo that the
+photographer has shared under a Creative Commons licence. It prefers the most open
+licences (CC0, CC BY, CC BY-SA) and otherwise uses CC BY-NC / CC BY-NC-SA, which allow
+non-commercial use such as this university project. "All rights reserved" and
+no-derivatives (ND) photos are never used. It first looks at the species' curated
+photos, then at research-grade observations.
+
+A hand-picked iNaturalist photo id in photo_overrides.json wins (it must be one of the
+species' own photos or a research-grade observation photo with an open licence),
+e.g. {"Azadirachta indica": 46478533}.
+
 It saves a small JPEG (max 480 px) and records the photographer, licence and source
 page in frontend/data/photos.json; the app shows these as the photo credit.
-The manifest is saved after every plant, so an interrupted run loses nothing:
-run it again and it carries on with the plants that still have no photo.
+The manifest is saved after every plant, so an interrupted run loses nothing.
 
-Wikimedia limits how fast one address may download, so the script goes slowly
-and waits when asked to.
+Needs: Pillow (pip install pillow) and internet access to api.inaturalist.org and
+inaturalist-open-data.s3.amazonaws.com.
 
-Needs: Pillow (pip install pillow) and internet access to commons.wikimedia.org
-and upload.wikimedia.org.
-
-(Roman Urdu: har plant ki ek free-licence tasveer Commons se download karti hai, credit ke saath.
-Beech mein ruk jaaye to dobara chalayein, jahan chhoda tha wahin se shuru hogi.)
+(Roman Urdu: har plant ki ek Creative Commons tasveer iNaturalist se download karti hai,
+photographer ke naam aur licence ke saath. Ruk jaaye to dobara chalayein.)
 """
-import html
 import io
 import json
 import re
@@ -41,135 +44,118 @@ DATA = ROOT / "frontend" / "data"
 PHOTOS = DATA / "photos"
 MANIFEST = DATA / "photos.json"
 OVERRIDES = Path(__file__).with_name("photo_overrides.json")
-API = "https://commons.wikimedia.org/w/api.php"
+API = "https://api.inaturalist.org/v1"
+PHOTO_HOST = "inaturalist-open-data.s3.amazonaws.com"   # where openly licensed photos live
 UA = "PlantifyKarachi/1.0 (university final-year project; plant recommender)"
 SIZE = 480
-THUMB_WIDTH = 500          # a standard Wikimedia thumbnail size
-PAUSE_BETWEEN_PLANTS = 6   # seconds; Wikimedia throttles fast downloaders
-FREE = re.compile(r"^(cc[- ]by(-sa)?([- ][0-9.]+)?|cc0|cc zero|public domain|pd|gfdl)", re.I)
-NOT_FREE = re.compile(r"\b(nc|nd)\b", re.I)
-BAD_TITLE = re.compile(
-    r"MHNT|herbar|specimen|\bBOT\b|K[oö]hler|illustrat|drawing|plate|\bmap\b|distribution|stamp|logo|"
-    r"diagram|chart|scan|microscop|section|pollen|wood|timber|plank|furniture|bonsai|"
-    r"\.svg|\.tiff?$|\.gif$|botanical|flora[ _]of|book|page", re.I)
+PAUSE = 1.2   # iNaturalist asks for at most about one request per second
+
+# Lower number = preferred. ND licences and "all rights reserved" are not listed, so never used.
+LICENCE_RANK = {"cc0": 0, "cc-by": 1, "cc-by-sa": 2, "cc-by-nc": 3, "cc-by-nc-sa": 4}
+LICENCE_NAME = {"cc0": "CC0", "cc-by": "CC BY 4.0", "cc-by-sa": "CC BY-SA 4.0",
+                "cc-by-nc": "CC BY-NC 4.0", "cc-by-nc-sa": "CC BY-NC-SA 4.0"}
+LICENCE_URL = {"cc0": "https://creativecommons.org/publicdomain/zero/1.0/",
+               "cc-by": "https://creativecommons.org/licenses/by/4.0/",
+               "cc-by-sa": "https://creativecommons.org/licenses/by-sa/4.0/",
+               "cc-by-nc": "https://creativecommons.org/licenses/by-nc/4.0/",
+               "cc-by-nc-sa": "https://creativecommons.org/licenses/by-nc-sa/4.0/"}
 
 
-def wait_time(e, attempt):
-    return int(e.headers.get("Retry-After") or 0) or 15 * (attempt + 1)
-
-
-def api(params):
-    q = urllib.parse.urlencode({**params, "format": "json", "formatversion": "2"})
-    req = urllib.request.Request(f"{API}?{q}", headers={"User-Agent": UA})
-    for attempt in range(6):
-        try:
-            with urllib.request.urlopen(req, timeout=40) as r:
-                return json.load(r)
-        except urllib.error.HTTPError as e:
-            if e.code not in (429, 503) or attempt == 5:
-                raise
-            print(f"  server busy (HTTP {e.code}), waiting {wait_time(e, attempt)}s", flush=True)
-            time.sleep(wait_time(e, attempt))
-
-
-def download(url):
+def get(url, as_json=True):
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     for attempt in range(6):
         try:
             with urllib.request.urlopen(req, timeout=60) as r:
-                return r.read()
+                return json.load(r) if as_json else r.read()
         except urllib.error.HTTPError as e:
-            if e.code not in (429, 503) or attempt == 5:
+            if e.code not in (429, 500, 502, 503) or attempt == 5:
                 raise
-            print(f"  image server busy, waiting {wait_time(e, attempt)}s", flush=True)
-            time.sleep(wait_time(e, attempt))
+            wait = int(e.headers.get("Retry-After") or 0) or 10 * (attempt + 1)
+            print(f"  server busy (HTTP {e.code}), waiting {wait}s", flush=True)
+            time.sleep(wait)
+        finally:
+            time.sleep(PAUSE)
 
 
-def clean(s):
-    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", s or ""))).strip()
+def api(path, **params):
+    return get(f"{API}/{path}?{urllib.parse.urlencode(params)}")
 
 
-INFO = {"prop": "imageinfo", "iiprop": "url|size|extmetadata", "iiurlwidth": THUMB_WIDTH,
-        "iiextmetadatafilter": "Artist|LicenseShortName|LicenseUrl"}
+def find_taxon(sci):
+    """The iNaturalist taxon for a scientific name (follows synonyms)."""
+    res = api("taxa", q=sci, per_page=10, is_active="true").get("results", [])
+    want = sci.lower()
+    for t in res:
+        if t.get("name", "").lower() == want or (t.get("matched_term") or "").lower() == want:
+            return t
+    genus = want.split()[0]
+    for t in res:
+        if t.get("rank") in ("species", "subspecies", "variety", "hybrid") and t.get("name", "").lower().startswith(genus):
+            return t
+    return None
 
 
-def candidates_by_search(query, limit=12):
-    d = api({"action": "query", "generator": "search", "gsrnamespace": 6, "gsrlimit": limit,
-             "gsrsearch": f"{query} filetype:bitmap", **INFO})
-    return sorted(d.get("query", {}).get("pages", []), key=lambda p: p.get("index", 99))
-
-
-def candidate_by_title(title):
-    d = api({"action": "query", "titles": title if title.startswith("File:") else "File:" + title, **INFO})
-    return d.get("query", {}).get("pages", [])
-
-
-def describe(page):
-    """Turn an API page into a usable candidate, or None if it is not a free photo."""
-    info = (page.get("imageinfo") or [None])[0]
-    if not info or not info.get("thumburl"):
+def usable(photo):
+    lic = (photo.get("license_code") or "").lower()
+    url = photo.get("medium_url") or photo.get("url") or ""
+    if lic not in LICENCE_RANK or PHOTO_HOST not in url:
         return None
-    meta = info.get("extmetadata", {})
-    lic = clean(meta.get("LicenseShortName", {}).get("value"))
-    if not FREE.search(lic) or NOT_FREE.search(lic):
-        return None
+    dims = photo.get("original_dimensions") or {}
+    w, h = dims.get("width", 0), dims.get("height", 0)
     return {
-        "title": page["title"],
-        "thumb": urllib.parse.urlsplit(info["thumburl"])._replace(netloc="upload.wikimedia.org", query="").geturl(),
-        "width": info.get("width", 0), "height": info.get("height", 0),
-        "artist": clean(meta.get("Artist", {}).get("value"))[:120] or "Unknown author",
-        "license": lic, "license_url": meta.get("LicenseUrl", {}).get("value") or None,
-        "page": info.get("descriptionurl"),
+        "id": photo["id"], "licence": lic,
+        "url": re.sub(r"/(square|small|thumb|original|large)\.", "/medium.", url),
+        "attribution": photo.get("attribution") or "",
+        "ratio_ok": 0.6 <= (w / h if h else 1) <= 1.8,
     }
 
 
-def score(c, rank, sci, commons):
-    t = c["title"].lower()
-    genus, _, species = sci.lower().partition(" ")
-    s = 10 - rank
-    s += 4 if genus in t else 0
-    s += 3 if species and species in t else 0
-    s += 2 if any(n in t for n in commons) else 0
-    s += 2 if c["width"] >= 1000 else 0
-    ratio = c["width"] / max(1, c["height"])
-    s += 1 if 0.6 <= ratio <= 1.8 else -3
-    return s
+def pick(photos):
+    """Most open licence first; among equals keep the taxon's own order; prefer non-extreme shapes."""
+    best = None
+    for i, p in enumerate(photos):
+        c = usable(p)
+        if not c:
+            continue
+        key = (LICENCE_RANK[c["licence"]], 0 if c["ratio_ok"] else 1, i)
+        if best is None or key < best[0]:
+            best = (key, c)
+    return best[1] if best else None
 
 
-def common_names(p):
-    out = []
-    for part in re.split(r"[/(),]", p.get("common_name") or ""):
-        part = re.sub(r"\b(e\.g\.|etc|shrub|tree)\b", "", part, flags=re.I).strip().lower()
-        if len(part) >= 4:
-            out.append(part)
-    return out
+def observation_photos(taxon_id, per_page=12):
+    obs = api("observations", taxon_id=taxon_id, photo_license="cc0,cc-by,cc-by-sa,cc-by-nc,cc-by-nc-sa",
+              quality_grade="research", order_by="votes", per_page=per_page).get("results", [])
+    return [ph for o in obs for ph in o.get("photos", [])[:1]]
 
 
-def best_photo(p, overrides):
+def photo_for(p, overrides):
     sci = p["scientific_name"]
+    taxon = find_taxon(sci)
+    if not taxon:
+        return None, None
+    full = api(f"taxa/{taxon['id']}").get("results", [{}])[0]
+    taxon_photos = [tp["photo"] for tp in full.get("taxon_photos", [])]
     if sci in overrides:
-        for page in candidate_by_title(overrides[sci]):
-            c = describe(page)
-            if c:
-                return c
-        print(f"  override not usable: {sci} -> {overrides[sci]}", flush=True)
-    commons = common_names(p)
-    queries = [f'"{sci}"'] + [f'"{n}" plant' for n in commons[:2]]
-    best, best_score = None, -99
-    for q in queries:
-        for rank, page in enumerate(candidates_by_search(q)):
-            if BAD_TITLE.search(page.get("title", "")):
-                continue
-            c = describe(page)
-            if not c:
-                continue
-            sc = score(c, rank, sci, commons)
-            if sc > best_score:
-                best, best_score = c, sc
-        if best and best_score >= 12:
-            break
-        time.sleep(2)
-    return best
+        # A hand-picked photo: look for it among the species' photos and observations.
+        want = int(overrides[sci])
+        for ph in taxon_photos + observation_photos(taxon["id"]):
+            if ph.get("id") == want:
+                c = usable(ph)
+                if c:
+                    return c, taxon
+        print(f"  override not found or not openly licensed: {sci} -> {want}; using the automatic pick", flush=True)
+    c = pick(taxon_photos)
+    if not c:
+        c = pick(observation_photos(taxon["id"], per_page=10))
+    return c, taxon
+
+
+def credit_name(attribution):
+    """'(c) Jane Doe, some rights reserved (CC BY-NC), uploaded by jdoe' -> 'Jane Doe'."""
+    m = re.match(r"\(c\)\s*(.*?),\s*(some|no) rights reserved", attribution)
+    name = (m.group(1) if m else attribution).strip()
+    return name[:120] or "iNaturalist user"
 
 
 def slug(name):
@@ -203,26 +189,26 @@ def main():
     for p in todo:
         sci = p["scientific_name"]
         try:
-            c = best_photo(p, overrides)
+            c, taxon = photo_for(p, overrides)
             if not c:
-                print(f"  no free photo: {sci} ({p.get('common_name')})", flush=True)
+                print(f"  no open-licence photo: {sci} ({p.get('common_name')})", flush=True)
                 continue
-            img = Image.open(io.BytesIO(download(c["thumb"]))).convert("RGB")
+            img = Image.open(io.BytesIO(get(c["url"], as_json=False))).convert("RGB")
         except Exception as e:  # noqa: BLE001 - keep going with the next plant
-            print(f"  failed: {sci}: {str(e)[:80]}", flush=True)
-            time.sleep(PAUSE_BETWEEN_PLANTS)
+            print(f"  failed: {sci}: {str(e)[:100]}", flush=True)
             continue
         img.thumbnail((SIZE, SIZE))
         dest = PHOTOS / f"{slug(sci)}.jpg"
         img.save(dest, "JPEG", quality=80, optimize=True, progressive=True)
         manifest[sci] = {
             "src": f"data/photos/{dest.name}", "width": img.width, "height": img.height,
-            "file": c["title"], "artist": c["artist"], "license": c["license"],
-            "license_url": c["license_url"], "source_page": c["page"],
+            "artist": credit_name(c["attribution"]),
+            "license": LICENCE_NAME[c["licence"]], "license_url": LICENCE_URL[c["licence"]],
+            "source_page": f"https://www.inaturalist.org/photos/{c['id']}",
+            "inat_taxon": taxon["name"] if taxon else None,
         }
         save_manifest(manifest)
-        print(f"  ok: {sci} <- {c['title']} ({c['license']})", flush=True)
-        time.sleep(PAUSE_BETWEEN_PLANTS)
+        print(f"  ok: {sci} <- photo {c['id']} ({LICENCE_NAME[c['licence']]}, {manifest[sci]['artist']})", flush=True)
 
     save_manifest(manifest)
     print(f"photos: {len(manifest)}/{len(plants)}", flush=True)

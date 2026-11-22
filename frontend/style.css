@@ -551,8 +551,17 @@ button { font: inherit; color: inherit; }
   .ph svg { width: 36px; height: 36px; }
 }
 @media (min-width: 900px) {
-  .pl > summary { grid-template-columns: 96px minmax(0, 1fr) auto; gap: 16px; }
-  .ph { width: 96px; height: 96px; }
+  /* Laptop: photo as a banner across the top of each card, score beside the name. */
+  .pl > summary {
+    grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "ph ph" "main side";
+    column-gap: 12px; row-gap: 14px; padding-top: 16px;
+  }
+  .ph { grid-area: ph; width: 100%; height: 190px; border-radius: 12px; }
+  .ph svg { width: 48px; height: 48px; }
+  .pl-main { grid-area: main; }
+  .pl-side { grid-area: side; }
+  .pl:hover .ph img.loaded { transform: scale(1.03); }
+  .ph img { transition: opacity 0.35s ease, transform 0.4s ease; }
   .gauge { width: 48px; height: 48px; }
   .gauge svg { width: 48px; height: 48px; }
   .gauge span { font-size: 14px; }

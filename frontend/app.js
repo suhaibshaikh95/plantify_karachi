@@ -548,7 +548,7 @@
       el.appendChild(img);
       const credit = $('.credit', card);
       if (credit) {
-        credit.innerHTML = `Photo: <a href="${esc(ph.page)}" target="_blank" rel="noopener">${esc(ph.artist)}</a>, ${esc(ph.license)}, via Wikimedia Commons.`;
+        credit.innerHTML = `Photo: <a href="${esc(ph.page)}" target="_blank" rel="noopener">${esc(ph.artist)}</a>, ${esc(ph.license)}, via iNaturalist.`;
         credit.hidden = false;
       }
     }

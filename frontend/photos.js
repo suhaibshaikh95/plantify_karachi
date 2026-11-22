@@ -3,8 +3,8 @@
  *
  * The photos are stored in the project (data/photos/*.jpg) and listed in
  * data/photos.json with each photographer and licence, so they show without
- * internet. They come from Wikipedia / Wikimedia Commons (free licences only) and
- * are downloaded by scripts/fetch_photos.py.
+ * internet. They come from iNaturalist (Creative Commons licences only) and are
+ * downloaded by scripts/fetch_photos.py.
  * A plant with no photo keeps its tree / shrub / palm icon.
  *
  * (Roman Urdu: har plant ki tasveer project ke andar se dikhata hai, credit ke saath.)

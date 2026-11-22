@@ -133,21 +133,25 @@ If this endpoint does not exist, the chat screen answers from the species data i
 ## Plant photos
 
 Each plant card shows a photo stored in the project (`data/photos/`), so photos work without
-internet once downloaded. `scripts/fetch_photos.py` searches Wikimedia Commons for each plant and
-keeps only photos with a free licence (CC BY, CC BY-SA, CC0, public domain). The photographer and
-licence go into `data/photos.json` and are shown under "Why this score" on each card, as the
-licences require. A plant with no photo shows a tree, shrub or palm icon instead.
+internet. All 85 plants have one. They come from [iNaturalist](https://www.inaturalist.org) and
+were shared by their photographers under Creative Commons licences: CC0, CC BY or CC BY-SA where
+available, otherwise CC BY-NC / CC BY-NC-SA, which allow non-commercial use such as this
+university project. "All rights reserved" and no-derivatives photos are never used.
+The photographer and licence of each photo are in `data/photos.json` and are shown under
+"Why this score" on each card, as the licences require. If this app is ever used commercially,
+replace the CC BY-NC photos.
 
-Download the photos (needs Pillow and internet; about 10–15 minutes for 85 plants):
+Seven automatic picks were replaced by hand (`scripts/photo_overrides.json` holds the chosen
+iNaturalist photo ids). To download the photos again (needs Pillow and internet):
 
 ```bash
 pip install pillow
-python3 frontend/scripts/fetch_photos.py
+python3 frontend/scripts/fetch_photos.py --refresh
 ```
 
-If it stops part-way, run it again: it carries on with the plants that still have no photo.
-To replace a wrong photo, put the Commons file name in `scripts/photo_overrides.json`
-(for example `{"Azadirachta indica": "File:Neem tree.jpg"}`) and run
+If it stops part-way, run it again without `--refresh`: it carries on with the plants that still
+have no photo. To replace one photo, add its iNaturalist photo id to `scripts/photo_overrides.json`
+(for example `{"Azadirachta indica": 46478533}`) and run
 `python3 frontend/scripts/fetch_photos.py --only "Azadirachta indica"`.
 
 ## Outside services
