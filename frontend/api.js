@@ -130,6 +130,7 @@
       distance_km: request.distance_km ?? null,
       site_salinity: request.site_salinity,
       recommendations: local.recommended.map((x) => ({ plant: x.plant, score: x.score, probability: null, sub: x.sub })),
+      eligible: local.eligible.map((x) => ({ plant: x.plant, score: x.score, probability: null, sub: x.sub })),
       excluded: local.excluded,
     };
   }

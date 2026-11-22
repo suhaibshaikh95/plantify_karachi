@@ -16,7 +16,8 @@
 
   function displayName(p) {
     let c = String(p.common_name || p.scientific_name || '').trim()
-      .replace(/^\((.*)\)$/, '$1').replace(/^E\.g\.\s*/i, '').replace(/\s+etc\.?$/i, '').trim();
+      .replace(/^\((.*)\)$/, '$1').replace(/^E\.g\.\s*/i, '').replace(/\s+etc\.?$/i, '')
+      .replace(/\s*\((shrub|tree)\)\s*$/i, '').trim();
     if (!c) c = p.scientific_name;
     return c.charAt(0).toUpperCase() + c.slice(1);
   }

@@ -24,6 +24,25 @@
   const TEXTURE_WORD = { light: 'Sandy', medium: 'Loam', heavy: 'Clay' };
   const SALT_LABEL = ['Low', 'Medium', 'High'];
   const EXCLUDE_ORDER = ['do_not_plant', 'poisonous', 'salinity', 'space', 'water', 'ph', 'temperature'];
+  const FILTERS = [
+    { key: 'native', label: 'Native', test: (p) => p.native === 1 },
+    { key: 'lowwater', label: 'Low water', test: (p) => p.water_need === 1 },
+    { key: 'lowcare', label: 'Low care', test: (p) => p.low_maintenance === 1 },
+    { key: 'shade', label: 'Shade', test: (p) => p.purpose_shade === 1 },
+    { key: 'fruit', label: 'Fruit', test: (p) => p.purpose_fruit === 1 },
+    { key: 'flowers', label: 'Flowers', test: (p) => p.purpose_ornamental === 1 },
+  ];
+  const PALMS = ['Phoenix', 'Cocos', 'Roystonea', 'Livistona', 'Washingtonia', 'Nannorrhops'];
+  const FORM_ICON = {
+    Tree: '<path d="M12 22v-6"/><path d="M7.5 16h9a4 4 0 0 0 1.2-7.8A5.5 5.5 0 0 0 6.3 8.2 4 4 0 0 0 7.5 16z"/>',
+    Shrub: '<path d="M3 20h18"/><path d="M5 20a7 7 0 0 1 14 0"/><path d="M9 14.5a3 3 0 0 1 6 0"/>',
+    Palm: '<path d="M12.5 22c0-5 .5-9 .5-13"/><path d="M13 9C11 5 7 4 3 6"/><path d="M13 9c2-4 6-5 9-3"/><path d="M13 9c-3-1-7 1-8 5"/><path d="M13 9c3-1 6 1 7 5"/>',
+  };
+  const SKELETON = `<div class="results-layout" aria-busy="true" aria-label="Checking 85 plants against your site">
+      <aside class="results-side"><div class="sk sk-title"></div><div class="sk sk-line"></div><div class="sk sk-card"></div></aside>
+      <div class="results-main"><div class="sk sk-line short"></div><div class="plant-list">
+        ${'<div class="sk sk-plant"></div>'.repeat(4)}</div>
+        <p class="loading-text">Checking 85 plants against your site…</p></div></div>`;
 
   // ------------------------------------------------------------------ state
   const KEY = 'plantify.state.v1', SAVED = 'plantify.saved.v1';
@@ -37,9 +56,32 @@
   let state = Object.assign(fresh(), store.get(KEY) || {});
   const save = () => store.set(KEY, state);
 
+  // ------------------------------------------------------------------ theme (light / dark)
+  const darkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+  function isDark() {
+    const t = document.documentElement.dataset.theme;
+    return t ? t === 'dark' : !!(darkQuery && darkQuery.matches);
+  }
+  function syncThemeButtons() {
+    const dark = isDark();
+    $$('.theme-toggle').forEach((b) => {
+      b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+      b.dataset.mode = dark ? 'dark' : 'light';
+    });
+  }
+  $$('.theme-toggle').forEach((b) => b.addEventListener('click', () => {
+    const next = isDark() ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem('plantify.theme', next); } catch (e) { /* ignore */ }
+    syncThemeButtons();
+  }));
+  if (darkQuery && darkQuery.addEventListener) darkQuery.addEventListener('change', syncThemeButtons);
+  syncThemeButtons();
+
   // ------------------------------------------------------------------ router
   const SCREENS = ['welcome', 'location', 'questions', 'results', 'chat'];
   let loading = false;   // true while /api/recommend is running
+  const filters = new Set();   // active results filters
   function route() {
     let name = (location.hash.replace(/^#\/?/, '') || 'welcome').split('?')[0];
     if (!SCREENS.includes(name)) name = 'welcome';
@@ -313,13 +355,14 @@
 
   async function runRecommendation() {
     state.request = buildRequest();
+    filters.clear();
     state.result = null;
     state.chat = [];
     state.weather = null;
     save();
     loading = true;
     location.hash = '#/results';
-    $('#results-body').innerHTML = '<div class="loading"><div class="spinner"></div>Checking 85 plants against your site…</div>';
+    $('#results-body').innerHTML = SKELETON;
     try {
       state.result = await Api.recommend(state.request);
       loading = false;
@@ -343,7 +386,7 @@
   function showResults() {
     const r = state.result;
     if (!r) {
-      if (loading) $('#results-body').innerHTML = '<div class="loading"><div class="spinner"></div>Checking 85 plants against your site…</div>';
+      if (loading) $('#results-body').innerHTML = SKELETON;
       return;
     }
     const s = scenario();
@@ -351,7 +394,6 @@
     const site = r.site || state.site;
     const mapSal = Number(site.site_salinity_default);
     const raised = s.site_salinity > mapSal;
-    const shown = (x) => (x.probability !== null && x.probability !== undefined) ? Math.round(x.probability * 100) : Math.round(x.score);
 
     const excluded = [...r.excluded].sort((a, b) => EXCLUDE_ORDER.indexOf(a.code) - EXCLUDE_ORDER.indexOf(b.code));
 
@@ -379,23 +421,13 @@
       </aside>
       <div class="results-main">
 
-      ${recs.length ? `<p class="section-label">Recommended</p>
-      <div class="plant-list">${recs.map((x, i) => {
-        const p = x.plant;
-        const tags = T.tags(p);
-        return `<details class="pl">
-          <summary>
-            <div class="sc${i < 3 ? ' top' : ''}" aria-label="Suitability ${shown(x)} out of 100">${shown(x)}</div>
-            <div class="pl-main">
-              <div class="nm">${esc(T.displayName(p))}</div><div class="lt">${esc(p.scientific_name)}</div>
-              <p class="why">${esc(T.why(p, x.sub, s))}</p>
-              ${tags.length ? `<div class="tags">${tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
-            </div>
-            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          </summary>
-          ${breakdown(x, r.source)}
-        </details>`;
-      }).join('')}</div>` : `<div class="tip warn" style="margin-top:20px">
+      ${recs.length ? `<div class="list-head">
+        <p class="section-label" id="list-label">Recommended</p>
+        <div class="filters" role="group" aria-label="Filter plants">${FILTERS.map((f) =>
+          `<button type="button" class="fc" data-f="${f.key}" aria-pressed="${filters.has(f.key)}">${esc(f.label)}</button>`).join('')}</div>
+      </div>
+      <p class="filter-note" id="filter-note" aria-live="polite"></p>
+      <div class="plant-list" id="plant-list"></div>` : `<div class="tip warn" style="margin-top:20px">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>
         <div>None of the 85 plants passed every safety and survival check. More watering days or a larger space usually helps.</div></div>`}
 
@@ -408,7 +440,19 @@
       ${source.replace('class="source"', 'class="source mob-only"')}
       </div></div>`;
 
+    if (recs.length) {
+      renderPlantList();
+      $('#results-body .filters').addEventListener('click', (e) => {
+        const b = e.target.closest('.fc');
+        if (!b) return;
+        if (filters.has(b.dataset.f)) filters.delete(b.dataset.f); else filters.add(b.dataset.f);
+        b.setAttribute('aria-pressed', String(filters.has(b.dataset.f)));
+        renderPlantList();
+      });
+    }
+
     $$('#results-body .start-over').forEach((b) => b.addEventListener('click', () => {
+      filters.clear();
       state = fresh();
       save();
       if (photoUrl) { URL.revokeObjectURL(photoUrl); photoUrl = null; }
@@ -417,6 +461,65 @@
     }));
     updateSaveButton();
     loadWeather();
+  }
+
+  function plantForm(p) {
+    if (PALMS.some((g) => p.scientific_name.startsWith(g + ' '))) return 'Palm';
+    const f = p.form || [];
+    if (/\(shrub\)/i.test(p.common_name || '')) return 'Shrub';
+    if (f.includes('shrub') && !f.includes('tree')) return 'Shrub';
+    return 'Tree';
+  }
+
+  function gauge(v, top) {
+    const C = 2 * Math.PI * 20;
+    const off = C * (1 - Math.max(0, Math.min(100, v)) / 100);
+    return `<div class="gauge${top ? ' top' : ''}" role="img" aria-label="Suitability ${v} out of 100">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><circle class="g-track" cx="24" cy="24" r="20"/>
+      <circle class="g-fill" cx="24" cy="24" r="20" stroke-dasharray="${C.toFixed(1)}" style="--len:${C.toFixed(1)};--off:${off.toFixed(1)}"/></svg>
+      <span>${v}</span></div>`;
+  }
+
+  function plantCard(x, rank, source, s) {
+    const p = x.plant;
+    const tags = T.tags(p);
+    const form = plantForm(p);
+    const v = (x.probability !== null && x.probability !== undefined) ? Math.round(x.probability * 100) : Math.round(x.score);
+    return `<details class="pl">
+      <summary>
+        ${gauge(v, rank < 3)}
+        <div class="pl-main">
+          <div class="nm">${esc(T.displayName(p))}</div>
+          <div class="lt"><span class="form-ic" title="${form}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${FORM_ICON[form]}</svg>${form}</span> · <i>${esc(p.scientific_name)}</i></div>
+          <p class="why">${esc(T.why(p, x.sub, s))}</p>
+          ${tags.length ? `<div class="tags">${tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
+        </div>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      ${breakdown(x, source)}
+    </details>`;
+  }
+
+  /** Top 6 by default; with filters, the best 6 of every suitable plant that matches all of them. */
+  function renderPlantList() {
+    const r = state.result;
+    const s = scenario();
+    const active = FILTERS.filter((f) => filters.has(f.key));
+    const pool = (r.eligible && r.eligible.length) ? r.eligible : r.recommendations;
+    let items, note = '';
+    if (!active.length) {
+      items = r.recommendations.map((x, i) => ({ x, rank: i }));
+    } else {
+      const words = active.map((f) => f.label.toLowerCase()).join(' + ');
+      const matches = pool.map((x, i) => ({ x, rank: i })).filter(({ x }) => active.every((f) => f.test(x.plant)));
+      items = matches.slice(0, 6);
+      note = matches.length
+        ? `Showing the best ${items.length} of ${matches.length} suitable plant${matches.length === 1 ? '' : 's'} that ${matches.length === 1 ? 'is' : 'are'} ${words}.`
+        : `No suitable plants are ${words}. Remove a filter to see more.`;
+    }
+    $('#list-label').textContent = active.length ? 'Filtered' : 'Recommended';
+    $('#filter-note').textContent = note;
+    $('#plant-list').innerHTML = items.map(({ x, rank }) => plantCard(x, rank, r.source, s)).join('');
   }
 
   function breakdown(x, source) {
