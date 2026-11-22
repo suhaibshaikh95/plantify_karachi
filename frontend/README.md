@@ -3,6 +3,10 @@
 The mobile-first web app built from the **Plantify Karachi UI** design: five screens,
 plain HTML/CSS/JS, no build step.
 
+It is a responsive website: on phones it shows the mobile design; on laptops and desktops
+(900px and wider) it switches to a full-width site header and two-column pages
+(photo beside map, questions in two columns, results with a site-info sidebar and a grid of plant cards).
+
 | # | Screen | Route | What it does |
 |---|---|---|---|
 | 1 | Welcome | `#/welcome` | Intro and the three steps |

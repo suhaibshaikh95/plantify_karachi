@@ -53,6 +53,8 @@
     if (location.hash !== '#/' + name) history.replaceState(null, '', '#/' + name);
 
     $$('.screen').forEach((s) => { s.hidden = s.dataset.screen !== name; });
+    document.body.dataset.screen = name;
+    updateSavedLinks();
     window.scrollTo(0, 0);
     ({ welcome: showWelcome, location: showLocation, questions: showQuestions, results: showResults, chat: showChat })[name]();
     const h = $(`#screen-${name} h1`) || $(`#screen-${name} .nav-title`);
@@ -71,7 +73,12 @@
 
   // ------------------------------------------------------------------ 1 · Welcome
   function showWelcome() {
-    $('#saved-link').hidden = !store.get(SAVED, localStorage);
+    updateSavedLinks();
+  }
+
+  function updateSavedLinks() {
+    const has = !!store.get(SAVED, localStorage);
+    $$('.saved-link').forEach((a) => { a.hidden = !has; });
   }
 
   // ------------------------------------------------------------------ 2 · Photo & location
@@ -348,7 +355,14 @@
 
     const excluded = [...r.excluded].sort((a, b) => EXCLUDE_ORDER.indexOf(a.code) - EXCLUDE_ORDER.indexOf(b.code));
 
-    $('#results-body').innerHTML = `
+    const actions = (cls) => `<div class="actions ${cls}">
+        ${recs.length ? '<a href="#/chat" class="btn btn-primary">Ask about a plant</a>' : ''}
+        <button type="button" class="btn btn-secondary start-over">Start over</button>
+      </div>`;
+    const source = `<p class="source">Based on mapped soil and salt data, not a soil test.
+        ${r.source === 'model' ? 'Ranked by the XGBoost model.' : 'Scored by Plantify’s rule engine.'}</p>`;
+
+    $('#results-body').innerHTML = `<div class="results-layout"><aside class="results-side">
       <h1 class="results-title">${recs.length ? `${recs.length} plant${recs.length === 1 ? '' : 's'} for your plot` : 'No safe plants found'}</h1>
       <p class="results-sub">${esc(site.label || site.area_name)}${r.distance_km !== null && r.distance_km !== undefined ? ` · nearest reference site ${esc(r.distance_km)} km` : ''}</p>
 
@@ -360,9 +374,13 @@
       </div>
       ${raised ? `<p class="fine">You reported signs of salt, so we raised salinity from ${SALT_LABEL[mapSal].toLowerCase()} (soil map) to ${SALT_LABEL[s.site_salinity].toLowerCase()}.</p>` : ''}
       <div id="weather-tip"></div>
+      ${actions('desk-only')}
+      ${source.replace('class="source"', 'class="source desk-only"')}
+      </aside>
+      <div class="results-main">
 
       ${recs.length ? `<p class="section-label">Recommended</p>
-      <div>${recs.map((x, i) => {
+      <div class="plant-list">${recs.map((x, i) => {
         const p = x.plant;
         const tags = T.tags(p);
         return `<details class="pl">
@@ -386,20 +404,17 @@
         ${excluded.map((x) => `<div class="rm"><span>${esc(T.displayName(x.plant))}</span><span>${esc(T.excludedReason(x))}</span></div>`).join('')}
       </details>` : ''}
 
-      <div class="actions">
-        ${recs.length ? '<a href="#/chat" class="btn btn-primary">Ask about a plant</a>' : ''}
-        <button type="button" class="btn btn-secondary" id="start-over">Start over</button>
-      </div>
-      <p class="source">Based on mapped soil and salt data, not a soil test.
-        ${r.source === 'model' ? 'Ranked by the XGBoost model.' : 'Scored by Plantify’s rule engine.'}</p>`;
+      ${actions('mob-only')}
+      ${source.replace('class="source"', 'class="source mob-only"')}
+      </div></div>`;
 
-    $('#start-over').addEventListener('click', () => {
+    $$('#results-body .start-over').forEach((b) => b.addEventListener('click', () => {
       state = fresh();
       save();
       if (photoUrl) { URL.revokeObjectURL(photoUrl); photoUrl = null; }
       $('#photo-input').value = '';
       location.hash = '#/welcome';
-    });
+    }));
     updateSaveButton();
     loadWeather();
   }
@@ -461,6 +476,7 @@
       toast(store.get(SAVED, localStorage) ? 'Saved on this device' : 'Could not save: storage is blocked in this browser');
     }
     updateSaveButton();
+    updateSavedLinks();
   });
 
   // ------------------------------------------------------------------ 5 · Chat

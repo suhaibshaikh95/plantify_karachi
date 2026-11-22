@@ -14,7 +14,19 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="app">
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="#/welcome" class="brand">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V11"/><path d="M12 11C12 6 8 3 4 3c0 5 3 8 8 8z"/><path d="M12 14c0-4 3-7 8-7 0 4-3 7-8 7z"/></svg>
+      <span>Plantify Karachi</span>
+    </a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="#/results" class="text-link saved-link" hidden>Saved plan</a>
+      <a href="#/location" class="btn btn-primary btn-sm">Find my plants</a>
+    </nav>
+  </div>
+</header>
+<main class="app">
 
   <!-- 1 · Welcome -->
   <section class="screen screen-welcome" id="screen-welcome" data-screen="welcome" hidden>
@@ -23,20 +35,32 @@
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V11"/><path d="M12 11C12 6 8 3 4 3c0 5 3 8 8 8z"/><path d="M12 14c0-4 3-7 8-7 0 4-3 7-8 7z"/></svg>
         <span>Plantify</span>
       </div>
-      <a href="#/results" class="text-link" id="saved-link" hidden>Saved plan</a>
+      <a href="#/results" class="text-link saved-link" hidden>Saved plan</a>
     </header>
+    <div class="welcome-grid">
     <div class="hero">
       <p class="eyebrow">Karachi only</p>
       <h1 class="display">The right plants for your plot.</h1>
       <p class="lead">Take one photo and answer seven quick questions. We check the soil, salt and climate of your spot and suggest six plants that will survive.</p>
     </div>
+    <div class="welcome-steps">
+    <p class="steps-title">How it works</p>
     <ol class="steps">
       <li><span class="step-num">1</span>Upload a photo of the land</li>
       <li><span class="step-num">2</span>Answer 7 simple questions</li>
       <li><span class="step-num">3</span>Get your top 6 plants, with reasons</li>
     </ol>
-    <a href="#/location" class="btn btn-primary">Get started</a>
-    <p class="fine center">No soil test or sensors needed</p>
+    <dl class="facts">
+      <div><dt>104</dt><dd>Karachi reference sites</dd></div>
+      <div><dt>85</dt><dd>Plant species checked</dd></div>
+      <div><dt>2026</dt><dd>Soil salinity projection</dd></div>
+    </dl>
+    </div>
+    <div class="welcome-cta">
+      <a href="#/location" class="btn btn-primary">Get started</a>
+      <p class="fine">No soil test or sensors needed</p>
+    </div>
+    </div>
   </section>
 
   <!-- 2 · Photo & location -->
@@ -50,6 +74,9 @@
     <h1 class="title">Your plot</h1>
     <p class="subtitle">A clear photo of the ground and where it is.</p>
 
+    <div class="loc-grid">
+    <div class="loc-photo">
+    <p class="label desk-only">Photo of the land</p>
     <div class="photo" id="photo">
       <label class="photo-empty" id="photo-empty" for="photo-input">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="4"/></svg>
@@ -64,7 +91,9 @@
       <label for="photo-input" class="photo-replace" id="photo-replace" hidden>Replace</label>
       <input type="file" id="photo-input" accept="image/*" class="visually-hidden">
     </div>
+    </div>
 
+    <div class="loc-place">
     <p class="label">Location</p>
     <div class="map-card">
       <div class="map" id="map" aria-label="Map. Drag the pin or tap the map to set your plot."></div>
@@ -85,9 +114,11 @@
       <select id="site-select"><option value="">Or choose your area from the list</option></select>
     </label>
     <p class="msg" id="location-msg" role="status" aria-live="polite"></p>
+    </div>
+    </div>
 
     <div class="spacer"></div>
-    <button type="button" class="btn btn-primary" id="location-continue" disabled>Continue</button>
+    <button type="button" class="btn btn-primary btn-end" id="location-continue" disabled>Continue</button>
   </section>
 
   <!-- 3 · Site questions -->
@@ -145,7 +176,7 @@
 
     <p class="msg" id="questions-msg" role="status" aria-live="polite"></p>
     <div class="spacer"></div>
-    <button type="button" class="btn btn-primary" id="get-plants">Get my plants</button>
+    <button type="button" class="btn btn-primary btn-end" id="get-plants">Get my plants</button>
   </section>
 
   <!-- 4 · Results -->
@@ -173,7 +204,7 @@
     </form>
   </section>
 
-</div>
+</main>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
