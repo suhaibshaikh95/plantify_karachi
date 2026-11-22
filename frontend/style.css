@@ -521,3 +521,39 @@ button { font: inherit; color: inherit; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0ms !important; transition-duration: 0.01ms !important; }
   .sk { animation: none; }
 }
+
+/* ======================================================================
+   Plant photos (Wikipedia / Wikimedia Commons), icon until loaded
+   ====================================================================== */
+.pl > summary { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: start; }
+.ph {
+  position: relative; width: 64px; height: 64px; border-radius: 14px; overflow: hidden; flex: none;
+  background: var(--accent-pale); color: var(--pale-ink);
+  display: flex; align-items: center; justify-content: center;
+}
+.ph svg { width: 30px; height: 30px; }
+.ph img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity 0.35s ease;
+}
+.ph img.loaded { opacity: 1; }
+.pl-side { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.pl-side .chev { margin-top: 0; }
+.gauge { width: 44px; height: 44px; }
+.gauge svg { width: 44px; height: 44px; }
+.gauge span { font-size: 13px; }
+.credit { font-size: 11px !important; }
+.credit a { color: var(--muted); }
+
+@media (min-width: 600px) {
+  .pl > summary { grid-template-columns: 84px minmax(0, 1fr) auto; }
+  .ph { width: 84px; height: 84px; border-radius: 16px; }
+  .ph svg { width: 36px; height: 36px; }
+}
+@media (min-width: 900px) {
+  .pl > summary { grid-template-columns: 96px minmax(0, 1fr) auto; gap: 16px; }
+  .ph { width: 96px; height: 96px; }
+  .gauge { width: 48px; height: 48px; }
+  .gauge svg { width: 48px; height: 48px; }
+  .gauge span { font-size: 14px; }
+}

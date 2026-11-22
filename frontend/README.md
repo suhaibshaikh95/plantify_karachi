@@ -49,8 +49,11 @@ If FastAPI serves the `frontend/` folder itself, no setting is needed (same orig
 | `engine.js` | Stage 1 rule filter + Stage 2 score, ported from `scripts/generate_training_data_v23.py` |
 | `chat.js` | Plain-language reasons and the offline Q&A for the chat screen |
 | `exif.js` | Reads GPS coordinates from a JPEG photo |
+| `photos.js` | Shows each plant's photo with its credit (from `data/photos.json`) |
 | `data/sites.json`, `data/plants.json` | Built from the v2.4 dataset |
-| `scripts/build_data.py` | Rebuilds `data/*.json` — run after the CSVs change |
+| `data/photos/`, `data/photos.json` | One photo per plant, with photographer and licence |
+| `scripts/build_data.py` | Rebuilds `data/sites.json` and `data/plants.json` — run after the CSVs change |
+| `scripts/fetch_photos.py` | Downloads the plant photos from Wikipedia / Wikimedia Commons |
 | `tests/engine_parity.test.js` | Checks `engine.js` against all 221,000 labelled training rows |
 
 ## Tests
@@ -126,6 +129,26 @@ Response:
 **`POST /api/chat`** *(optional)* — body `{"question": "...", "site_id": 79, "plants": ["Azadirachta indica", ...], "history": [...]}` →
 `{"answer": "...", "source": "Karachi planting guide · Neem care"}`.
 If this endpoint does not exist, the chat screen answers from the species data instead.
+
+## Plant photos
+
+Each plant card shows a photo stored in the project (`data/photos/`), so photos work without
+internet once downloaded. `scripts/fetch_photos.py` searches Wikimedia Commons for each plant and
+keeps only photos with a free licence (CC BY, CC BY-SA, CC0, public domain). The photographer and
+licence go into `data/photos.json` and are shown under "Why this score" on each card, as the
+licences require. A plant with no photo shows a tree, shrub or palm icon instead.
+
+Download the photos (needs Pillow and internet; about 10–15 minutes for 85 plants):
+
+```bash
+pip install pillow
+python3 frontend/scripts/fetch_photos.py
+```
+
+If it stops part-way, run it again: it carries on with the plants that still have no photo.
+To replace a wrong photo, put the Commons file name in `scripts/photo_overrides.json`
+(for example `{"Azadirachta indica": "File:Neem tree.jpg"}`) and run
+`python3 frontend/scripts/fetch_photos.py --only "Azadirachta indica"`.
 
 ## Outside services
 

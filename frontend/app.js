@@ -487,14 +487,19 @@
     const v = (x.probability !== null && x.probability !== undefined) ? Math.round(x.probability * 100) : Math.round(x.score);
     return `<details class="pl">
       <summary>
-        ${gauge(v, rank < 3)}
+        <div class="ph" data-sci="${esc(p.scientific_name)}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${FORM_ICON[form]}</svg>
+        </div>
         <div class="pl-main">
           <div class="nm">${esc(T.displayName(p))}</div>
           <div class="lt"><span class="form-ic" title="${form}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${FORM_ICON[form]}</svg>${form}</span> · <i>${esc(p.scientific_name)}</i></div>
           <p class="why">${esc(T.why(p, x.sub, s))}</p>
           ${tags.length ? `<div class="tags">${tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
         </div>
-        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        <div class="pl-side">
+          ${gauge(v, rank < 3)}
+          <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
       </summary>
       ${breakdown(x, source)}
     </details>`;
@@ -520,6 +525,33 @@
     $('#list-label').textContent = active.length ? 'Filtered' : 'Recommended';
     $('#filter-note').textContent = note;
     $('#plant-list').innerHTML = items.map(({ x, rank }) => plantCard(x, rank, r.source, s)).join('');
+    fillPhotos();
+  }
+
+  /** Swap each plant's icon for its Wikipedia photo once it loads; add the photo credit. */
+  async function fillPhotos() {
+    if (!window.PlantifyPhotos) return;
+    const slots = $$('#plant-list .ph[data-sci]');
+    const photos = await window.PlantifyPhotos.get(slots.map((el) => el.dataset.sci));
+    for (const el of slots) {
+      const ph = photos.get(el.dataset.sci);
+      if (!ph || !el.isConnected || el.querySelector('img')) continue;
+      const card = el.closest('.pl');
+      const img = new Image();
+      img.alt = 'Photo of ' + ($('.nm', card) ? $('.nm', card).textContent : el.dataset.sci);
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.referrerPolicy = 'no-referrer';
+      img.onload = () => { el.classList.add('has-photo'); img.classList.add('loaded'); };
+      img.onerror = () => img.remove();
+      img.src = ph.thumb;
+      el.appendChild(img);
+      const credit = $('.credit', card);
+      if (credit) {
+        credit.innerHTML = `Photo: <a href="${esc(ph.page)}" target="_blank" rel="noopener">${esc(ph.artist)}</a>, ${esc(ph.license)}, via Wikimedia Commons.`;
+        credit.hidden = false;
+      }
+    }
   }
 
   function breakdown(x, source) {
@@ -542,7 +574,7 @@
     if (T.guideNote(p) && p.guide_recommendation !== 'good') notes.push(`Guide: ${T.guideNote(p)}.`);
     if (p.trait_confidence === 'low' || p.trait_confidence === 'medium') notes.push('Some traits for this plant are estimates; check with a nursery.');
     html += notes.map((n) => `<p>${esc(n)}</p>`).join('');
-    return html + '</div>';
+    return html + '<p class="credit" hidden></p></div>';
   }
 
   async function loadWeather() {
