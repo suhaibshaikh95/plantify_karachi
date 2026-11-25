@@ -1,0 +1,30 @@
+.map {
+  height: 220px;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+
+.leaflet {
+  height: 100%;
+  width: 100%;
+}
+
+.moving {
+  box-shadow: inset 0 0 0 2px var(--color-primary);
+}
+
+.moving .leaflet {
+  cursor: crosshair;
+}
+
+.pinIcon {
+  background: none;
+  border: 0;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25));
+}
+
+@media (min-width: 900px) {
+  .map {
+    height: 280px;
+  }
+}

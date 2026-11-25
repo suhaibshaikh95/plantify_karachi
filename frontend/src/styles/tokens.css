@@ -1,0 +1,77 @@
+/* Design tokens: the single place for colours, type, spacing, radii and shadows. */
+:root {
+  /* Colour: calm, nature-inspired, light */
+  --color-bg: #f6f8f4;
+  --color-bg-tint: #eaf2ea;
+  --color-surface: #ffffff;
+  --color-surface-muted: #fafbf8;
+  --color-glass: rgba(255, 255, 255, 0.72);
+  --color-ink: #17201a;
+  --color-text: #2d3a30;
+  --color-muted: #5b675d;
+  --color-subtle: #6b766c;
+  --color-border: #e2e8df;
+  --color-border-strong: #cfd8cb;
+  --color-line: #edf1ea;
+
+  --color-primary: #2e6b45;
+  --color-primary-hover: #24573a;
+  --color-primary-soft: #e5f0e7;
+  --color-primary-ink: #1d4a2e;
+  --color-leaf: #7fb88f;
+  --color-sun: #e9b949;
+
+  --color-warn: #8f5310;
+  --color-warn-soft: #fcf3e3;
+  --color-danger: #a33a2c;
+  --color-danger-soft: #fbecea;
+
+  /* Type */
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 0.9375rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: clamp(2.25rem, 5vw, 3.75rem);
+
+  /* Space */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Shape and depth */
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+  --shadow-xs: 0 1px 2px rgba(23, 45, 30, 0.05);
+  --shadow-sm: 0 2px 8px -2px rgba(23, 45, 30, 0.08);
+  --shadow-md: 0 10px 28px -12px rgba(23, 45, 30, 0.16);
+  --shadow-lg: 0 24px 56px -20px rgba(23, 45, 30, 0.22);
+  --ring: 0 0 0 3px rgba(46, 107, 69, 0.22);
+
+  /* Layout */
+  --container: 1120px;
+  --header-height: 68px;
+  --gutter: 20px;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (min-width: 900px) {
+  :root {
+    --gutter: 40px;
+  }
+}

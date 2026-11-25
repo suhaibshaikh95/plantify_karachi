@@ -1,0 +1,121 @@
+.photo {
+  position: relative;
+  height: 240px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background:
+    radial-gradient(400px 200px at 20% 0%, rgba(255, 255, 255, 0.35), transparent 60%),
+    linear-gradient(160deg, #cdbf9f 0%, #ad9a78 55%, #8f7d5d 100%);
+  box-shadow: var(--shadow-sm);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: fade 0.3s ease both;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.empty {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  text-align: center;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+
+.emptyIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  margin-bottom: var(--space-1);
+  transition: transform 0.2s var(--ease);
+}
+
+.empty:hover .emptyIcon {
+  transform: scale(1.06);
+}
+
+.emptyTitle {
+  font-weight: 600;
+  font-size: var(--text-md);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.emptyText {
+  font-size: var(--text-sm);
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.chips {
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+
+.chip {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.ok {
+  color: var(--color-primary);
+}
+
+.replace {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  border: 0;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+@media (min-width: 900px) {
+  .photo {
+    height: 100%;
+    min-height: 420px;
+  }
+}

@@ -1,0 +1,82 @@
+.bubble {
+  max-width: min(82%, 560px);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  animation: in 0.22s var(--ease) both;
+}
+
+@keyframes in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.user {
+  align-self: flex-end;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 18px 18px 6px 18px;
+  box-shadow: 0 6px 16px -10px rgba(46, 107, 69, 0.8);
+}
+
+.assistant {
+  align-self: flex-start;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px 18px 18px 6px;
+  box-shadow: var(--shadow-xs);
+}
+
+.error {
+  background: var(--color-danger-soft);
+  border-color: rgba(163, 58, 44, 0.16);
+}
+
+.text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.source {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-subtle);
+}
+
+.dots {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-leaf);
+  animation: blink 1.2s infinite ease-in-out;
+}
+
+.dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}

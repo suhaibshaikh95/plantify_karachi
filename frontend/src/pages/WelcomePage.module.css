@@ -1,0 +1,174 @@
+.page {
+  display: grid;
+  gap: var(--space-10);
+  align-items: center;
+  min-height: calc(100vh - var(--header-height) - 180px);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-ink);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(46, 107, 69, 0.15);
+}
+
+.title {
+  margin-top: var(--space-5);
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+}
+
+.highlight {
+  color: var(--color-primary);
+}
+
+.lead {
+  margin-top: var(--space-5);
+  max-width: 32em;
+  font-size: var(--text-lg);
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+.actions {
+  margin-top: var(--space-8);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-5);
+}
+
+.fine {
+  font-size: var(--text-sm);
+  color: var(--color-subtle);
+}
+
+.points {
+  list-style: none;
+  margin: var(--space-10) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.points li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+.points svg {
+  color: var(--color-primary);
+  flex: none;
+}
+
+.side {
+  position: relative;
+}
+
+.blob {
+  position: absolute;
+  inset: -10% -6% -12% 8%;
+  border-radius: 42% 58% 55% 45% / 48% 42% 58% 52%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(127, 184, 143, 0.55), transparent 60%),
+    radial-gradient(circle at 75% 70%, rgba(233, 185, 73, 0.3), transparent 55%),
+    radial-gradient(circle at 60% 20%, rgba(46, 107, 69, 0.25), transparent 60%);
+  filter: blur(8px);
+  z-index: 0;
+}
+
+.howCard {
+  position: relative;
+  z-index: 1;
+}
+
+.howTitle {
+  font-size: var(--text-xs);
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-subtle);
+}
+
+.steps {
+  list-style: none;
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+}
+
+.step {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.stepIcon {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.stepTitle {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.stepNum {
+  color: var(--color-primary);
+}
+
+.stepText {
+  margin-top: 2px;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+@media (min-width: 900px) {
+  .page {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: var(--space-16);
+  }
+
+  .points {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  .points li {
+    align-items: flex-start;
+  }
+
+  .howCard {
+    padding: var(--space-8);
+  }
+}

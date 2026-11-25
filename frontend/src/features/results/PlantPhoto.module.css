@@ -1,0 +1,27 @@
+.photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: linear-gradient(150deg, var(--color-primary-soft), #d7e8db);
+  color: var(--color-primary);
+  display: grid;
+  place-items: center;
+}
+
+.icon {
+  opacity: 0.7;
+}
+
+.img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.5s var(--ease);
+}
+
+.loaded {
+  opacity: 1;
+}

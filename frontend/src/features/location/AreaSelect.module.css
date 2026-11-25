@@ -1,0 +1,43 @@
+.wrap {
+  display: block;
+}
+
+.select {
+  width: 100%;
+  height: 48px;
+  padding: 0 40px 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%235B675D' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 14px center;
+  appearance: none;
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+}
+
+.select:hover {
+  border-color: var(--color-border-strong);
+}
+
+.select:disabled {
+  color: var(--color-subtle);
+  cursor: progress;
+}
+
+.error {
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+
+.retry {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
