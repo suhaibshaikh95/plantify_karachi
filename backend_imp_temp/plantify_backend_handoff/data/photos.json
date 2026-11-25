@@ -1,0 +1,852 @@
+{
+ "Aegiceras corniculatum": {
+  "src": "data/photos/aegiceras_corniculatum.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/34559364",
+  "inat_taxon": "Aegiceras corniculatum"
+ },
+ "Aegle marmelos": {
+  "src": "data/photos/aegle_marmelos.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by Vijay Barve",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/459649",
+  "inat_taxon": "Aegle marmelos"
+ },
+ "Albizia julibrissin": {
+  "src": "data/photos/albizia_julibrissin.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Andrew Butko",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/146757188",
+  "inat_taxon": "Albizia julibrissin"
+ },
+ "Albizia lebbeck": {
+  "src": "data/photos/albizia_lebbeck.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "berthapi2",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/48771727",
+  "inat_taxon": "Albizia lebbeck"
+ },
+ "Alstonia scholaris": {
+  "src": "data/photos/alstonia_scholaris.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Ong Jyh Seng",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/160602252",
+  "inat_taxon": "Alstonia scholaris"
+ },
+ "Araucaria cunninghamii": {
+  "src": "data/photos/araucaria_cunninghamii.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Shaun Swanepoel",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/112897066",
+  "inat_taxon": "Araucaria cunninghamii"
+ },
+ "Azadirachta indica": {
+  "src": "data/photos/azadirachta_indica.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Hareesha A S",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/46478533",
+  "inat_taxon": "Azadirachta indica"
+ },
+ "Bombax ceiba": {
+  "src": "data/photos/bombax_ceiba.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "T R Shankar Raman",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/157490381",
+  "inat_taxon": "Bombax ceiba"
+ },
+ "Butea monosperma": {
+  "src": "data/photos/butea_monosperma.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by Vijay Barve",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/3889326",
+  "inat_taxon": "Butea monosperma"
+ },
+ "Capparis decidua": {
+  "src": "data/photos/capparis_decidua.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Aditya Satish",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/455106200",
+  "inat_taxon": "Capparis decidua"
+ },
+ "Carica papaya": {
+  "src": "data/photos/carica_papaya.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "annalake99",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/113841397",
+  "inat_taxon": "Carica papaya"
+ },
+ "Cassia fistula": {
+  "src": "data/photos/cassia_fistula.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Tony van Kampen",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/152349950",
+  "inat_taxon": "Cassia fistula"
+ },
+ "Cassia siamea": {
+  "src": "data/photos/cassia_siamea.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Mattia Menchetti",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/24675233",
+  "inat_taxon": "Senna siamea"
+ },
+ "Casuarina equisetifolia": {
+  "src": "data/photos/casuarina_equisetifolia.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/86493430",
+  "inat_taxon": "Casuarina equisetifolia"
+ },
+ "Ceiba pentandra": {
+  "src": "data/photos/ceiba_pentandra.jpg",
+  "width": 480,
+  "height": 343,
+  "artist": "no rights reserved, uploaded by Manuel Ortiz",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/32279278",
+  "inat_taxon": "Ceiba pentandra"
+ },
+ "Cocos nucifera": {
+  "src": "data/photos/cocos_nucifera.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Steve Maldonado Silvestrini",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/389189537",
+  "inat_taxon": "Cocos nucifera"
+ },
+ "Conocarpus erectus": {
+  "src": "data/photos/conocarpus_erectus.jpg",
+  "width": 480,
+  "height": 326,
+  "artist": "Douglas Goldman",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/78712818",
+  "inat_taxon": "Conocarpus erectus"
+ },
+ "Conocarpus lancifolius": {
+  "src": "data/photos/conocarpus_lancifolius.jpg",
+  "width": 270,
+  "height": 480,
+  "artist": "no rights reserved, uploaded by Ajit Ampalakkad",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/10638613",
+  "inat_taxon": "Conocarpus lancifolius"
+ },
+ "Cordia gharaf": {
+  "src": "data/photos/cordia_gharaf.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/479516277",
+  "inat_taxon": "Cordia sinensis"
+ },
+ "Cordia macleodii": {
+  "src": "data/photos/cordia_macleodii.jpg",
+  "width": 361,
+  "height": 480,
+  "artist": "c michael hogan",
+  "license": "CC BY-NC-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/7514318",
+  "inat_taxon": "Cordia macleodii"
+ },
+ "Cordia myxa": {
+  "src": "data/photos/cordia_myxa.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Siddarth Machado",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/48589842",
+  "inat_taxon": "Cordia myxa"
+ },
+ "Cordia sebestena": {
+  "src": "data/photos/cordia_sebestena.jpg",
+  "width": 480,
+  "height": 320,
+  "artist": "Jean Meunier",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/271494835",
+  "inat_taxon": "Cordia sebestena"
+ },
+ "Crateva adansonii": {
+  "src": "data/photos/crateva_adansonii.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/38016544",
+  "inat_taxon": "Crateva adansonii"
+ },
+ "Dalbergia sissoo": {
+  "src": "data/photos/dalbergia_sissoo.jpg",
+  "width": 270,
+  "height": 480,
+  "artist": "Swarochi Tathagath",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/96222804",
+  "inat_taxon": "Dalbergia sissoo"
+ },
+ "Delonix regia": {
+  "src": "data/photos/delonix_regia.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/38635179",
+  "inat_taxon": "Delonix regia"
+ },
+ "Dendrocalamus strictus": {
+  "src": "data/photos/dendrocalamus_strictus.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Rodriguez Ariel",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/49731527",
+  "inat_taxon": "Dendrocalamus strictus"
+ },
+ "Erythrina suberosa": {
+  "src": "data/photos/erythrina_suberosa.jpg",
+  "width": 341,
+  "height": 480,
+  "artist": "Siddarth Machado",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/42014860",
+  "inat_taxon": "Erythrina suberosa"
+ },
+ "Eucalyptus camaldulensis": {
+  "src": "data/photos/eucalyptus_camaldulensis.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Sydney Oats",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/235843377",
+  "inat_taxon": "Eucalyptus camaldulensis"
+ },
+ "Euphorbia caducifolia": {
+  "src": "data/photos/euphorbia_caducifolia.jpg",
+  "width": 480,
+  "height": 320,
+  "artist": "Massimiliano Finzi",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/6131530",
+  "inat_taxon": "Euphorbia caducifolia"
+ },
+ "Euphorbia tirucalli": {
+  "src": "data/photos/euphorbia_tirucalli.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Kate Turner",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/7005806",
+  "inat_taxon": "Euphorbia tirucalli"
+ },
+ "Fernandoa adenophylla": {
+  "src": "data/photos/fernandoa_adenophylla.jpg",
+  "width": 480,
+  "height": 480,
+  "artist": "SONU KUMAR",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/336059997",
+  "inat_taxon": "Fernandoa adenophylla"
+ },
+ "Ficus amplissima": {
+  "src": "data/photos/ficus_amplissima.jpg",
+  "width": 480,
+  "height": 320,
+  "artist": "PARTH PARIKH_BIRDER",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/395286101",
+  "inat_taxon": "Ficus amplissima"
+ },
+ "Ficus benghalensis": {
+  "src": "data/photos/ficus_benghalensis.jpg",
+  "width": 480,
+  "height": 320,
+  "artist": "jess n",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/7695",
+  "inat_taxon": "Ficus benghalensis"
+ },
+ "Ficus benjamina": {
+  "src": "data/photos/ficus_benjamina.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/68686046",
+  "inat_taxon": "Ficus benjamina"
+ },
+ "Ficus elastica": {
+  "src": "data/photos/ficus_elastica.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Yoav Daniel Bar-Ness",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/192123334",
+  "inat_taxon": "Ficus elastica"
+ },
+ "Ficus lyrata": {
+  "src": "data/photos/ficus_lyrata.jpg",
+  "width": 480,
+  "height": 320,
+  "artist": "Dailun Shi",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/104468007",
+  "inat_taxon": "Ficus lyrata"
+ },
+ "Ficus microcarpa": {
+  "src": "data/photos/ficus_microcarpa.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/59896114",
+  "inat_taxon": "Ficus microcarpa"
+ },
+ "Ficus racemosa": {
+  "src": "data/photos/ficus_racemosa.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Siddarth Machado",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/61420725",
+  "inat_taxon": "Ficus racemosa"
+ },
+ "Ficus religiosa": {
+  "src": "data/photos/ficus_religiosa.jpg",
+  "width": 480,
+  "height": 320,
+  "artist": "Hua Wan",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/119134047",
+  "inat_taxon": "Ficus religiosa"
+ },
+ "Ficus rubiginosa": {
+  "src": "data/photos/ficus_rubiginosa.jpg",
+  "width": 480,
+  "height": 395,
+  "artist": "Tony Rebelo",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/83643586",
+  "inat_taxon": "Ficus rubiginosa"
+ },
+ "Ficus rumphii": {
+  "src": "data/photos/ficus_rumphii.jpg",
+  "width": 270,
+  "height": 480,
+  "artist": "discoverymike",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/172876946",
+  "inat_taxon": "Ficus rumphii"
+ },
+ "Ficus virens": {
+  "src": "data/photos/ficus_virens.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Greg Tasney",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/89556172",
+  "inat_taxon": "Ficus virens"
+ },
+ "Guaiacum officinale": {
+  "src": "data/photos/guaiacum_officinale.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "greensxm",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/49392426",
+  "inat_taxon": "Guaiacum officinale"
+ },
+ "Leucaena leucocephala": {
+  "src": "data/photos/leucaena_leucocephala.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/173810094",
+  "inat_taxon": "Leucaena leucocephala"
+ },
+ "Livistona chinensis": {
+  "src": "data/photos/livistona_chinensis.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/111277053",
+  "inat_taxon": "Livistona chinensis"
+ },
+ "Mangifera indica": {
+  "src": "data/photos/mangifera_indica.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Martin Reith",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/76990558",
+  "inat_taxon": "Mangifera indica"
+ },
+ "Manilkara zapota": {
+  "src": "data/photos/manilkara_zapota.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Forest and Kim Starr",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/71195358",
+  "inat_taxon": "Manilkara zapota"
+ },
+ "Melia azedarach": {
+  "src": "data/photos/melia_azedarach.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/33351307",
+  "inat_taxon": "Melia azedarach"
+ },
+ "Millingtonia hortensis": {
+  "src": "data/photos/millingtonia_hortensis.jpg",
+  "width": 480,
+  "height": 356,
+  "artist": "J.M.Garg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/1472111",
+  "inat_taxon": "Millingtonia hortensis"
+ },
+ "Mimosa hamata": {
+  "src": "data/photos/mimosa_hamata.jpg",
+  "width": 369,
+  "height": 480,
+  "artist": "K S Gopi Sundar",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/152650555",
+  "inat_taxon": "Mimosa hamata"
+ },
+ "Moringa oleifera": {
+  "src": "data/photos/moringa_oleifera.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/65070195",
+  "inat_taxon": "Moringa oleifera"
+ },
+ "Morus alba": {
+  "src": "data/photos/morus_alba.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/56582166",
+  "inat_taxon": "Morus alba"
+ },
+ "Morus nigra": {
+  "src": "data/photos/morus_nigra.jpg",
+  "width": 480,
+  "height": 320,
+  "artist": "Mehmet Çelik",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/260207304",
+  "inat_taxon": "Morus nigra"
+ },
+ "Nannorrhops ritchiana": {
+  "src": "data/photos/nannorrhops_ritchiana.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "MRN",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/314842956",
+  "inat_taxon": "Nannorrhops ritchieana"
+ },
+ "Nerium oleander": {
+  "src": "data/photos/nerium_oleander.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Cheng-wei, Liu (Jack)",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/392455529",
+  "inat_taxon": "Nerium oleander"
+ },
+ "Parkinsonia aculeata": {
+  "src": "data/photos/parkinsonia_aculeata.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Rodolfo Salinas Villarreal",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/122782637",
+  "inat_taxon": "Parkinsonia aculeata"
+ },
+ "Peltophorum pterocarpum": {
+  "src": "data/photos/peltophorum_pterocarpum.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "George Baker",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/318406093",
+  "inat_taxon": "Peltophorum pterocarpum"
+ },
+ "Phoenix dactylifera": {
+  "src": "data/photos/phoenix_dactylifera.jpg",
+  "width": 480,
+  "height": 317,
+  "artist": "Ashley Basil",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/160414571",
+  "inat_taxon": "Phoenix dactylifera"
+ },
+ "Phoenix sylvestris": {
+  "src": "data/photos/phoenix_sylvestris.jpg",
+  "width": 480,
+  "height": 320,
+  "artist": "no rights reserved, uploaded by Sushant More",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/109368958",
+  "inat_taxon": "Phoenix sylvestris"
+ },
+ "Pistacia integerrima": {
+  "src": "data/photos/pistacia_integerrima.jpg",
+  "width": 480,
+  "height": 307,
+  "artist": "Suresh Ghimire",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/65103452",
+  "inat_taxon": "Pistacia chinensis integerrima"
+ },
+ "Pithecellobium dulce": {
+  "src": "data/photos/pithecellobium_dulce.jpg",
+  "width": 480,
+  "height": 363,
+  "artist": "Francisco Farriols Sarabia",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/4024336",
+  "inat_taxon": "Pithecellobium dulce"
+ },
+ "Polyalthia longifolia": {
+  "src": "data/photos/polyalthia_longifolia.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Raja Sekhar Chimirala",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/510654549",
+  "inat_taxon": "Monoon longifolium"
+ },
+ "Prosopis cineraria": {
+  "src": "data/photos/prosopis_cineraria.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Jiro Iguchi",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/10942396",
+  "inat_taxon": "Prosopis cineraria"
+ },
+ "Prosopis juliflora": {
+  "src": "data/photos/prosopis_juliflora.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Rohit Naniwadekar",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/115623761",
+  "inat_taxon": "Neltuma juliflora"
+ },
+ "Psidium guajava": {
+  "src": "data/photos/psidium_guajava.jpg",
+  "width": 319,
+  "height": 480,
+  "artist": "John Parrotta",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/751951189",
+  "inat_taxon": "Psidium guajava"
+ },
+ "Punica granatum": {
+  "src": "data/photos/punica_granatum.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "H. Zell",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/4956594",
+  "inat_taxon": "Punica granatum"
+ },
+ "Quercus phellos": {
+  "src": "data/photos/quercus_phellos.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Rob John",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/70148212",
+  "inat_taxon": "Quercus phellos"
+ },
+ "Roystonea regia": {
+  "src": "data/photos/roystonea_regia.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Forest and Kim Starr",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/123430235",
+  "inat_taxon": "Roystonea regia"
+ },
+ "Salvadora oleoides": {
+  "src": "data/photos/salvadora_oleoides.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Tom Field",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/182648984",
+  "inat_taxon": "Salvadora oleoides"
+ },
+ "Salvadora persica": {
+  "src": "data/photos/salvadora_persica.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Harshjeet Singh Bal",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/438844057",
+  "inat_taxon": "Salvadora persica"
+ },
+ "Saraca asoca": {
+  "src": "data/photos/saraca_asoca.jpg",
+  "width": 480,
+  "height": 400,
+  "artist": "Shiwalee Samant",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/61439132",
+  "inat_taxon": "Saraca asoca"
+ },
+ "Searsia lancea": {
+  "src": "data/photos/searsia_lancea.jpg",
+  "width": 320,
+  "height": 480,
+  "artist": "Tony Rebelo",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/15312618",
+  "inat_taxon": "Searsia lancea"
+ },
+ "Senegalia senegal": {
+  "src": "data/photos/senegalia_senegal.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Troos van der Merwe",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/173276398",
+  "inat_taxon": "Senegalia senegal"
+ },
+ "Syzygium cumini": {
+  "src": "data/photos/syzygium_cumini.jpg",
+  "width": 480,
+  "height": 320,
+  "artist": "budak",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/46156014",
+  "inat_taxon": "Syzygium cumini"
+ },
+ "Tabebuia heterophylla": {
+  "src": "data/photos/tabebuia_heterophylla.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "Forest and Kim Starr",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/3855701",
+  "inat_taxon": "Tabebuia heterophylla"
+ },
+ "Tamarindus indica": {
+  "src": "data/photos/tamarindus_indica.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/40233197",
+  "inat_taxon": "Tamarindus indica"
+ },
+ "Tamarix aphylla": {
+  "src": "data/photos/tamarix_aphylla.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/50697668",
+  "inat_taxon": "Tamarix aphylla"
+ },
+ "Tecomella undulata": {
+  "src": "data/photos/tecomella_undulata.jpg",
+  "width": 480,
+  "height": 480,
+  "artist": "Tamsin Carlisle",
+  "license": "CC BY-NC-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/4003239",
+  "inat_taxon": "Tecomella undulata"
+ },
+ "Terminalia catappa": {
+  "src": "data/photos/terminalia_catappa.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "Forest & Kim Starr",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/14371751",
+  "inat_taxon": "Terminalia catappa"
+ },
+ "Thespesia populnea": {
+  "src": "data/photos/thespesia_populnea.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/231165262",
+  "inat_taxon": "Thespesia populnea"
+ },
+ "Vachellia nilotica": {
+  "src": "data/photos/vachellia_nilotica.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by Peter Warren",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/13070874",
+  "inat_taxon": "Vachellia nilotica"
+ },
+ "Washingtonia robusta": {
+  "src": "data/photos/washingtonia_robusta.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "itazura",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/249270666",
+  "inat_taxon": "Washingtonia robusta"
+ },
+ "Ziziphus jujuba": {
+  "src": "data/photos/ziziphus_jujuba.jpg",
+  "width": 360,
+  "height": 480,
+  "artist": "oreste83",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/50110627",
+  "inat_taxon": "Ziziphus jujuba"
+ },
+ "Ziziphus mauritiana": {
+  "src": "data/photos/ziziphus_mauritiana.jpg",
+  "width": 480,
+  "height": 360,
+  "artist": "no rights reserved, uploaded by 葉子",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source_page": "https://www.inaturalist.org/photos/70894868",
+  "inat_taxon": "Ziziphus mauritiana"
+ },
+ "Ziziphus nummularia": {
+  "src": "data/photos/ziziphus_nummularia.jpg",
+  "width": 368,
+  "height": 480,
+  "artist": "Shiwalee Samant",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "source_page": "https://www.inaturalist.org/photos/90793524",
+  "inat_taxon": "Ziziphus nummularia"
+ }
+}
