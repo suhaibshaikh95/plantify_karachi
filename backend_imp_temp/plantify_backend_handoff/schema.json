@@ -1,0 +1,73 @@
+{
+  "id_columns_not_features": [
+    "scenario_id",
+    "site_id",
+    "scientific_name"
+  ],
+  "site_features": [
+    "ph",
+    "t_mean",
+    "t_hottest_month",
+    "t_coldest_month",
+    "industrial",
+    "lst_zone_celsius",
+    "site_type",
+    "texture",
+    "drainage",
+    "fertility"
+  ],
+  "user_features": [
+    "site_salinity",
+    "water_days",
+    "space",
+    "care",
+    "purpose",
+    "children_or_animals"
+  ],
+  "plant_features": [
+    "ph_opt_min",
+    "ph_opt_max",
+    "ph_abs_min",
+    "ph_abs_max",
+    "temp_opt_min",
+    "temp_opt_max",
+    "temp_abs_min",
+    "temp_abs_max",
+    "salt_tolerance",
+    "water_need",
+    "soil_light",
+    "soil_medium",
+    "soil_heavy",
+    "drainage_poor",
+    "drainage_well",
+    "drainage_excessive",
+    "fertility_low",
+    "fertility_medium",
+    "fertility_high",
+    "pollution_tolerance",
+    "urban_heat_tolerant",
+    "low_maintenance",
+    "native",
+    "proven_in_karachi",
+    "do_not_plant",
+    "poisonous",
+    "needs_large_space",
+    "purpose_shade",
+    "purpose_fruit",
+    "purpose_ornamental",
+    "purpose_carbon",
+    "guide_good",
+    "purpose_match"
+  ],
+  "categorical_features": [
+    "site_type",
+    "texture",
+    "drainage",
+    "fertility",
+    "space",
+    "care",
+    "purpose"
+  ],
+  "target": "suitable",
+  "evaluation_only_not_feature": "top6"
+}
