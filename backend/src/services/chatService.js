@@ -254,21 +254,45 @@ function withTimeout(promiseFactory, ms) {
 }
 
 // ------------------------------------------------------------------ Gemini client
+// gemini-3.5-flash-lite: in testing (27 Nov 2026) it answered every evaluation question in 0.5-1.3 s.
+// gemini-2.5-flash also answered well (~2 s) but its free tier allows only 20 requests a day, and the
+// gemini-3.x Flash models returned 503 "high demand" or took 50-140 s. Override with GEMINI_MODEL.
+const DEFAULT_GEMINI_MODEL = 'gemini-3.5-flash-lite';
+const RETRY_DELAY_MS = 800;
+
+/**
+ * True for errors worth one quick retry: the model is momentarily busy (503). Quota errors (429) are not
+ * retried: the free tier allows only a few requests per minute, so a retry would just fail again.
+ */
+function isBusyError(err) {
+  const text = `${err?.status ?? ''} ${err?.code ?? ''} ${err?.message ?? ''}`;
+  if (/\b429\b|RESOURCE_EXHAUSTED|quota/i.test(text)) return false;
+  return /\b503\b|UNAVAILABLE|overloaded|high demand/i.test(text);
+}
+
 /**
  * Returns generate({ systemInstruction, contents, abortSignal }) -> text, or null when no API key is set.
- * Uses the official @google/genai SDK.
+ * Uses the official @google/genai SDK on the v1beta API: on v1, system instructions are rejected for
+ * gemini-2.5-flash and the "-latest" aliases do not exist.
  */
 function createGeminiGenerator({ apiKey = process.env.GEMINI_API_KEY, model = process.env.GEMINI_MODEL } = {}) {
   if (!apiKey) return null;
   const { GoogleGenAI } = require('@google/genai');
-  const ai = new GoogleGenAI({ apiKey });
-  const modelName = model || 'gemini-3.8-flash';
+  const ai = new GoogleGenAI({ apiKey, httpOptions: { apiVersion: 'v1beta' } });
+  const modelName = model || DEFAULT_GEMINI_MODEL;
+  const call = ({ systemInstruction, contents, abortSignal, temperature }) =>
+    ai.models.generateContent({ model: modelName, contents, config: { systemInstruction, temperature, abortSignal } });
+
   const generate = async ({ systemInstruction, contents, abortSignal, temperature = DEFAULTS.temperature }) => {
-    const response = await ai.models.generateContent({
-      model: modelName,
-      contents,
-      config: { systemInstruction, temperature, abortSignal },
-    });
+    let response;
+    try {
+      response = await call({ systemInstruction, contents, abortSignal, temperature });
+    } catch (err) {
+      if (!isBusyError(err) || abortSignal?.aborted) throw err;
+      await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+      if (abortSignal?.aborted) throw err;
+      response = await call({ systemInstruction, contents, abortSignal, temperature }); // one retry, within the same time limit
+    }
     return response.text;
   };
   generate.modelName = modelName;
@@ -392,6 +416,7 @@ function createChatService({ retriever, generate = null, store = null, options =
 module.exports = {
   createChatService,
   createGeminiGenerator,
+  DEFAULT_GEMINI_MODEL,
   SYSTEM_INSTRUCTION,
   DECLINE_MESSAGE,
   FALLBACK_NOTE,

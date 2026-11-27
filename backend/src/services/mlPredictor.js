@@ -1,9 +1,11 @@
-const fs = require('fs');
-const path = require('path');
 const { spawn } = require('child_process');
 const readline = require('readline');
 const paths = require('../config/paths');
 const store = require('../data/store');
+const { resolvePythonBin } = require('../config/python');
+
+// Loading xgboost can take well over 5 s on a laptop's first start.
+const STARTUP_TIMEOUT_MS = Number(process.env.ML_STARTUP_TIMEOUT_MS) || 30000;
 
 const MISSING_VALUE = -1;
 
@@ -62,20 +64,6 @@ function buildFeatureVector(site, userFeatures, plant) {
   });
 }
 
-function resolvePythonBin() {
-  if (process.env.PYTHON_BIN) return process.env.PYTHON_BIN;
-  const venvCandidates = [
-    path.resolve(paths.BACKEND_ROOT, '.venv', 'bin', 'python3'),
-    path.resolve(paths.BACKEND_ROOT, '.venv', 'bin', 'python'),
-    path.resolve(paths.BACKEND_ROOT, '..', '.venv', 'bin', 'python3'),
-    path.resolve(paths.BACKEND_ROOT, '..', '.venv', 'bin', 'python'),
-  ];
-  for (const candidate of venvCandidates) {
-    if (fs.existsSync(candidate)) return candidate;
-  }
-  return 'python3';
-}
-
 class MlPredictor {
   constructor() {
     this.worker = null;
@@ -83,6 +71,7 @@ class MlPredictor {
     this.failed = false;
     this.pending = [];
     this.initPromise = null;
+    this.reason = null;
   }
 
   async init() {
@@ -96,6 +85,7 @@ class MlPredictor {
       let child;
 
       const failWorker = (reason) => {
+        this.reason = `${reason} [python: ${pyBin}]`;
         this.failed = true;
         this.ready = false;
         this.worker = null;
@@ -122,7 +112,7 @@ class MlPredictor {
 
       child.on('error', (err) => failWorker(`Python worker spawn failed: ${err.message}`));
       child.on('exit', (code) => {
-        if (!this.ready) failWorker(`Python worker exited early (code ${code})`);
+        if (!this.ready) failWorker(`Python worker exited early (code ${code}): ${stderrBuf.trim().split('\n').pop() || 'no stderr'}`);
         else {
           this.ready = false;
           this.worker = null;
@@ -161,9 +151,9 @@ class MlPredictor {
       setTimeout(() => {
         if (!settled) {
           child.kill();
-          failWorker(`Python worker startup timeout (${stderrBuf.trim() || 'no stderr'})`);
+          failWorker(`Python worker startup timeout (${stderrBuf.trim().split('\n').pop() || 'no stderr'})`);
         }
-      }, 5000);
+      }, STARTUP_TIMEOUT_MS);
     });
 
     return this.initPromise;

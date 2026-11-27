@@ -14,7 +14,8 @@ backend/
 ├── server.js                      # Application entrypoint (CORS, static photos, routes, ML + chat workers, boot)
 ├── src/
 │   ├── config/
-│   │   └── paths.js               # Centralized file paths to data JSONs, photos, & ML artifacts
+│   │   ├── paths.js               # Centralized file paths to data JSONs, photos, & ML artifacts
+│   │   └── python.js              # Finds the Python for the ML workers (PYTHON_BIN, .venv, python/python3)
 │   ├── data/
 │   │   └── store.js               # Loads JSON data & model schemas into memory at startup
 │   ├── services/
@@ -70,6 +71,7 @@ backend/
 ### Configuration & Data Loading (`backend/src/config/`, `backend/src/data/`)
 | File | What It Does |
 | :--- | :--- |
+| `src/config/python.js` | Picks the Python used by `predict.py`, `rag_worker.py` and `build:knowledge`: `PYTHON_BIN`, then `backend/.venv` or `../.venv` (`Scripts\python.exe` on Windows, `bin/python3` elsewhere), then `python` (Windows) / `python3`. Skips a venv copied from another computer, such as the repo's committed macOS `.venv`, whose `bin/python3` symlink becomes a tiny text file on Windows. |
 | `src/config/paths.js` | Resolves absolute file paths to `assets/data/*`, `assets/model/*`, and `src/ml/predict.py` so no relative path breaks. |
 | `src/data/store.js` | Reads `sites.json`, `plants.json`, `photos.json`, `schema.json`, `feature_columns.json`, and `metrics.json` once at startup and builds fast lookup maps (`sitesById`, `plantsBySciName`). |
 
@@ -105,7 +107,34 @@ npm start
 
 Server starts at `http://localhost:8000` (override with `PORT=...`). The startup log and `GET /api/health`
 show the state of each part: `model_ready` (XGBoost), `rag_ready` (chat retrieval), `gemini_configured`.
-If Python or a package is missing, recommendations fall back to rule scores and chat to the best passage.
+If a part is unavailable, the log says why and which Python it tried. Recommendations then fall back to
+rule scores and chat to the best passage.
+
+### Windows setup (one time)
+
+```powershell
+cd backend
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r src\ml\requirements.txt
+npm install
+copy .env.example .env      # then put your GEMINI_API_KEY in .env
+npm start
+```
+
+The backend finds `backend\.venv\Scripts\python.exe` by itself (or set `PYTHON_BIN` in `.env`).
+The very first start downloads the BGE-small model (about 130 MB), so the chat can take a few minutes
+to show `READY`; after that it loads from the local cache in a few seconds.
+
+### Gemini model and limits
+
+The default model is `gemini-3.5-flash-lite` (set `GEMINI_MODEL` to change it). In testing on
+27 Nov 2026 it answered every evaluation question in 0.5–1.3 seconds (`tests/chat_eval_results.md`).
+`gemini-2.5-flash` also answered well (about 2 seconds), but its free tier allows only **20 requests a
+day**; the `gemini-3.x` Flash models returned "high demand" (503) errors or took 50–140 seconds.
+Free-tier keys have per-minute and per-day limits for each model. When a limit is hit, the chat falls
+back to passage answers until it resets; `npm run eval:chat` waits 15 s between questions for this
+reason. Use a paid key for a demo with several users.
 
 ### Chat knowledge base
 

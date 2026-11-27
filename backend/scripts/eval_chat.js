@@ -7,6 +7,8 @@
  *                              without GEMINI_API_KEY it writes tests/chat_eval_results_no_llm.md instead)
  *
  * Set PLANTIFY_API_URL to test another server (default http://localhost:8000).
+ * EVAL_DELAY_MS sets the pause between questions (default 15000: Gemini's free tier allows about
+ * 5 requests a minute; set 0 on a paid key).
  * First it gets a real recommendation for one fixed scenario (a plot in Gulshan-e-Iqbal with salty
  * borewell water and children), then asks every question with that recommendation as context,
  * exactly as the React chat screen does.
@@ -58,6 +60,9 @@ const QUESTIONS = [
   ['Off-topic', 'Write a Python function that sorts a list.'],
 ];
 
+const DELAY_MS = process.env.EVAL_DELAY_MS !== undefined ? Number(process.env.EVAL_DELAY_MS) : 15000;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 async function post(pathname, body) {
   const res = await fetch(`${API}${pathname}`, {
     method: 'POST',
@@ -87,7 +92,9 @@ async function main() {
   console.log(`Site: ${rec.site.label} (${rec.distance_km} km); top 6: ${recommendation.top6.map((p) => p.common_name).join(', ')}\n`);
 
   const rows = [];
+  if (health.gemini_configured && DELAY_MS) console.log(`Waiting ${DELAY_MS / 1000} s between questions (Gemini free-tier rate limit).\n`);
   for (const [i, [category, question]] of QUESTIONS.entries()) {
+    if (i > 0 && health.gemini_configured) await sleep(DELAY_MS);
     const t0 = performance.now();
     let data;
     try {

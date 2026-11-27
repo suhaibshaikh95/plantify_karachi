@@ -7,27 +7,15 @@
  * Never throws: if the worker is not available it returns [] (the chat service then degrades).
  */
 const fs = require('fs');
-const path = require('path');
 const { spawn } = require('child_process');
 const readline = require('readline');
 const paths = require('../config/paths');
 
-const STARTUP_TIMEOUT_MS = Number(process.env.RAG_STARTUP_TIMEOUT_MS) || 120000; // first run may download BGE-small
+// The first start downloads BGE-small (~130 MB) and loads torch; that can take minutes on a laptop.
+const STARTUP_TIMEOUT_MS = Number(process.env.RAG_STARTUP_TIMEOUT_MS) || 600000;
 const REQUEST_TIMEOUT_MS = 10000;
 
-function resolvePythonBin() {
-  if (process.env.PYTHON_BIN) return process.env.PYTHON_BIN;
-  const candidates = [
-    path.resolve(paths.BACKEND_ROOT, '.venv', 'bin', 'python3'),
-    path.resolve(paths.BACKEND_ROOT, '.venv', 'bin', 'python'),
-    path.resolve(paths.BACKEND_ROOT, '.venv', 'Scripts', 'python.exe'),
-    path.resolve(paths.BACKEND_ROOT, '..', '.venv', 'bin', 'python3'),
-    path.resolve(paths.BACKEND_ROOT, '..', '.venv', 'bin', 'python'),
-    path.resolve(paths.BACKEND_ROOT, '..', '.venv', 'Scripts', 'python.exe'),
-  ];
-  for (const c of candidates) if (fs.existsSync(c)) return c;
-  return process.platform === 'win32' ? 'python' : 'python3';
-}
+const { resolvePythonBin } = require('../config/python');
 
 class RagRetriever {
   constructor() {
@@ -63,14 +51,15 @@ class RagRetriever {
         return;
       }
 
+      const pyBin = resolvePythonBin();
       let child;
       try {
-        child = spawn(resolvePythonBin(), [paths.RAG_SCRIPT_PATH, paths.KNOWLEDGE_DIR, '--serve'], {
+        child = spawn(pyBin, [paths.RAG_SCRIPT_PATH, paths.KNOWLEDGE_DIR, '--serve'], {
           stdio: ['pipe', 'pipe', 'pipe'],
-          env: { ...process.env, TOKENIZERS_PARALLELISM: 'false' },
+          env: { ...process.env, TOKENIZERS_PARALLELISM: 'false', HF_HUB_DISABLE_SYMLINKS_WARNING: '1', PYTHONWARNINGS: 'ignore' },
         });
       } catch (err) {
-        done(false, `could not start Python: ${err.message}`);
+        done(false, `could not start Python (${pyBin}): ${err.message}`);
         return;
       }
 
@@ -78,7 +67,7 @@ class RagRetriever {
       child.stderr.on('data', (c) => {
         stderr = (stderr + c.toString()).slice(-2000);
       });
-      child.on('error', (err) => done(false, `could not start Python: ${err.message}`));
+      child.on('error', (err) => done(false, `could not start Python (${pyBin}): ${err.message}`));
       child.on('exit', (code) => {
         if (!settled) {
           done(false, `worker exited (code ${code}): ${lastLine(stderr)}`);

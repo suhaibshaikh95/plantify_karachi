@@ -60,7 +60,13 @@ class Retriever:
                 f"index.faiss has {self.index.ntotal} vectors but passages.jsonl has {len(self.passages)} lines; "
                 "run `npm run build:knowledge` again"
             )
-        self.model = SentenceTransformer(MODEL_NAME)
+        try:
+            # Use the cached model without contacting Hugging Face (fast, works offline)...
+            self.model = SentenceTransformer(MODEL_NAME, local_files_only=True)
+        except Exception:
+            # ...and download it only the first time.
+            log(f"downloading {MODEL_NAME} (first start only)")
+            self.model = SentenceTransformer(MODEL_NAME)
         self.plant_names = self._plant_names()
 
     def _plant_names(self):
