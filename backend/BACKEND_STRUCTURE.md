@@ -10,7 +10,7 @@ This document explains the directory structure of `backend/` and what each file 
 backend/
 ├── BACKEND_STRUCTURE.md           # This guide: folder layout & explanation of every file
 ├── package.json                   # Node.js metadata, dependencies (express, cors, @google/genai), & scripts
-├── .env.example                   # Settings to copy into .env (GEMINI_API_KEY, GEMINI_MODEL, PORT, PYTHON_BIN)
+├── .env.example                   # Settings to copy into .env (GEMINI_API_KEY, GROQ_API_KEY, models, PORT, PYTHON_BIN)
 ├── server.js                      # Application entrypoint (CORS, static photos, routes, ML + chat workers, boot)
 ├── src/
 │   ├── config/
@@ -23,7 +23,8 @@ backend/
 │   │   ├── hybridEngine.js        # Salinity logic, Stage 1 rule filter, Stage 2 scoring & photo enrichment
 │   │   ├── mlPredictor.js         # Builds 66-column feature vectors & manages XGBoost worker process
 │   │   ├── ragRetriever.js        # Manages the chat retrieval worker (rag_worker.py) over JSON lines
-│   │   └── chatService.js         # Chat assistant: retrieval + user context + Gemini answer + fallbacks
+│   │   ├── chatService.js         # Chat assistant: retrieval + user context + model answer + fallbacks
+│   │   └── llmProviders.js        # Answer writers: Gemini, backup Gemini model, Groq, tried in order
 │   ├── ml/
 │   │   ├── predict.py             # Python worker that loads plantify_model.joblib & returns probabilities
 │   │   ├── build_index.py         # Builds the chat knowledge base: passages.jsonl + FAISS index
@@ -36,6 +37,7 @@ backend/
 │   └── eval_chat.js               # Asks the running API 20 fixed questions; saves tests/chat_eval_results.md
 ├── tests/
 │   ├── chat.test.js               # node:test tests of the chat service with a mocked Gemini
+│   ├── llmProviders.test.js       # node:test tests of the Gemini -> Groq backup chain (mocked, no network)
 │   └── chat_eval_results*.md      # Output of eval_chat.js (with Gemini / "_no_llm" without a key)
 └── assets/
     ├── data/
@@ -81,8 +83,9 @@ backend/
 | `src/services/geoService.js` | Implements `haversineKm()` and `findNearestSite()` to match any `(lat, lon)` coordinate from photo EXIF, GPS, or map pin drop to the closest of the 104 Karachi sites. |
 | `src/services/hybridEngine.js` | Runs the core recommendation pipeline: computes effective `site_salinity` from `salt_signs`, runs **Stage 1** deterministic safety/environmental exclusions (`do_not_plant`, `poisonous`, `salinity`, `ph`, `temperature`, `water`, `space`), calculates explainability `sub` scores (`0–100`), invokes Stage 2 ML predictions, ranks Top 6 plants, and attaches `traits` + `photo` URLs/credits. |
 | `src/services/ragRetriever.js` | Starts `rag_worker.py` with the server and sends it `{ question, k, plants, site_id }` over JSON lines; returns the top passages, or `[]` if the worker is unavailable (10 s timeout per request). |
-| `src/services/chatService.js` | The RAG chat assistant. Retrieves the 6 most similar passages, adds the user's live context (site profile from `site_id`, top-6 plants and excluded plants with reasons from the optional `recommendation` object), and asks Gemini (`@google/genai`, temperature 0.2, last 6 history turns) to answer only from them and name its sources. Declines off-topic questions. If there is no API key, Gemini fails or it takes over 15 s, it returns the best passage (or the user's exclusion reason) with a note; it never returns a 500. |
+| `src/services/chatService.js` | The RAG chat assistant. Retrieves the 6 most similar passages, adds the user's live context (site profile from `site_id`, top-6 plants and excluded plants with reasons from the optional `recommendation` object), and asks the language model (Gemini, or a backup from `llmProviders.js`; temperature 0.2, last 6 history turns) to answer only from them and name its sources. Declines off-topic questions. If no API key is set or every model fails or times out, it returns the best passage (or the user's exclusion reason) with a note; it never returns a 500. |
 | `src/services/mlPredictor.js` | Builds the exact **66-column feature vector** per plant using `schema.json` + `feature_columns.json` (`-1` imputation for `null` traits, `site_` one-hot prefix) and communicates with `predict.py` over JSON lines (with graceful fallback to Stage 2 rule scores if Python ML packages aren't installed). |
+| `src/services/llmProviders.js` | The models that write the chat answer, tried in order until one answers: Gemini (`GEMINI_MODEL`), an optional second Gemini model (`GEMINI_FALLBACK_MODEL`, which has its own free-tier quota), then Groq (`GROQ_API_KEY`, `GROQ_MODEL`, OpenAI-compatible API over HTTPS). Each gets its own time limit (Gemini 12 s, Groq 10 s). All receive the same system instruction and passages, so a backup answers by the same rules. |
 | `src/ml/predict.py` | Lightweight Python worker that loads `plantify_model.joblib` once into memory (`--serve` mode) and computes batch `predict_proba()` probabilities in milliseconds. |
 | `src/ml/build_index.py` | Turns `plants.json`, `sites.json`, `karachi_planting_guide.md` (split by `## ` sections, long ones further split) and `project_faq.md` into 80–200-word passages with metadata (id, source_type, title, scientific_name / site_id), embeds them with `BAAI/bge-small-en-v1.5` (normalized) and saves `passages.jsonl` + `index.faiss`. Null traits are written as "unknown"; estimated traits are flagged. Run with `npm run build:knowledge`. |
 | `src/ml/rag_worker.py` | Long-running retrieval worker (`--serve`, JSON lines, like `predict.py`). Loads BGE-small and the index once; embeds each question with the BGE query instruction; boosts passages about the user's plants (+0.05), their site (+0.05) and plants named in the question (+0.06); keeps at most 4 plant passages and 1 other-site passage; returns the top k with similarity scores. |
@@ -106,7 +109,7 @@ npm start
 ```
 
 Server starts at `http://localhost:8000` (override with `PORT=...`). The startup log and `GET /api/health`
-show the state of each part: `model_ready` (XGBoost), `rag_ready` (chat retrieval), `gemini_configured`.
+show the state of each part: `model_ready` (XGBoost), `rag_ready` (chat retrieval), `gemini_configured`, `llm_chain` (the models the chat will try, in order).
 If a part is unavailable, the log says why and which Python it tried. Recommendations then fall back to
 rule scores and chat to the best passage.
 
@@ -141,6 +144,23 @@ Free-tier keys have per-minute and per-day limits for each model. When a limit i
 back to passage answers until it resets; `npm run eval:chat` waits 15 s between questions for this
 reason. Use a paid key for a demo with several users.
 
+### Backup models (Groq)
+
+So that a Gemini limit or outage does not stop the chat, backups can be added in `backend/.env`:
+
+```
+GEMINI_FALLBACK_MODEL=gemini-2.5-flash      # optional: a second Gemini model (its own daily quota)
+GROQ_API_KEY=...                            # optional: free key from https://console.groq.com/keys
+GROQ_MODEL=llama-3.3-70b-versatile          # check https://console.groq.com/docs/models
+```
+
+The chat tries Gemini, then the backup Gemini model, then Groq, and uses the first answer it gets;
+only if all fail does it fall back to the best passage. The reply's `mode` (`gemini` / `groq`) and
+`model` say which one answered, and the server log shows `[chat] gemini (...) failed: ...` when it
+switches. The retrieval and the instructions are the same for every model, so the answer is still
+based only on the retrieved passages. Groq is used only as a backup: the evaluation results in
+`tests/chat_eval_results.md` were produced by Gemini.
+
 ### Chat knowledge base
 
 `assets/knowledge/passages.jsonl` and `index.faiss` are committed, so the chat works after `npm install`.
@@ -156,7 +176,7 @@ It prints how many passages came from each source. The first run downloads `BAAI
 ### Tests
 
 ```bash
-npm test             # chat service tests with a mocked Gemini (no network, no key)
+npm test             # chat service + backup-chain tests with mocked models (no network, no key)
 npm run eval:chat    # with the server running: 20 fixed questions -> tests/chat_eval_results.md
 ```
 

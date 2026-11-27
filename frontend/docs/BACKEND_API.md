@@ -105,7 +105,8 @@ How the app displays them (`recommendationMapper.js`):
 
 A retrieval-augmented assistant (backend `src/services/chatService.js`): the question is embedded with
 BGE-small, the 6 most similar passages (species data, site data, Karachi planting guide, project FAQ)
-are retrieved from a FAISS index, and Gemini answers only from those passages plus the user's own
+are retrieved from a FAISS index, and Gemini (or, if Gemini is down or over its limit, a backup model on
+Groq) answers only from those passages plus the user's own
 recommendation, naming its sources.
 
 Request sent by the chat page (`askPlantQuestion` + `chatRecommendation` in `src/services/plantifyApi.js`):
@@ -131,14 +132,15 @@ The app takes it from the saved `/api/recommend` result.
 Response:
 
 ```json
-{ "answer": "Water date palm about once a week once it is established…", "source": "Plant: Date palm (Phoenix dactylifera); Your recommendation", "sources": ["…"], "mode": "gemini" }
+{ "answer": "Water date palm about once a week once it is established…", "source": "Plant: Date palm (Phoenix dactylifera); Your recommendation", "sources": ["…"], "mode": "gemini", "model": "gemini-3.5-flash-lite" }
 ```
 
 | Field | Shown as |
 |---|---|
 | `answer` | The assistant's chat bubble (in the user's language: English, Urdu or Roman Urdu) |
 | `source` | "From: …" under the bubble (titles of the passages used) |
-| `mode` | Not shown. `gemini` normal answer, `fallback` best passage when Gemini is unavailable, `declined` off-topic question, `unavailable` retrieval down |
+| `mode` | Not shown. `gemini` normal answer, `groq` answered by the backup model, `fallback` best passage when no model is available, `declined` off-topic question, `unavailable` retrieval down |
+| `model` | Not shown. The model id that wrote the answer (only for `gemini` / `groq`) |
 
 The endpoint always answers with `200`, except `400` for an empty question. The app still shows
 "The plant chat is not available yet" if a server returns `501` (older backends).

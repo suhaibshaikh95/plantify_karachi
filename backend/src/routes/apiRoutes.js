@@ -4,13 +4,15 @@ const { findNearestSite } = require('../services/geoService');
 const { recommendPlants, formatDisplayName, formatPlantPhoto } = require('../services/hybridEngine');
 const { mlPredictor } = require('../services/mlPredictor');
 const { ragRetriever } = require('../services/ragRetriever');
-const { createChatService, createGeminiGenerator } = require('../services/chatService');
+const { createChatService } = require('../services/chatService');
+const { createDefaultGenerator } = require('../services/llmProviders');
 
 const router = express.Router();
 
-// Chat assistant (RAG): BGE-small + FAISS retrieval, Gemini generation. See services/chatService.js.
-const gemini = createGeminiGenerator();
-const chatService = createChatService({ retriever: ragRetriever, generate: gemini, store });
+// Chat assistant (RAG): BGE-small + FAISS retrieval; Gemini writes the answer, with optional backups
+// (GEMINI_FALLBACK_MODEL, then Groq). See services/chatService.js and services/llmProviders.js.
+const llm = createDefaultGenerator();
+const chatService = createChatService({ retriever: ragRetriever, generate: llm, store });
 
 // 1. GET /api/health
 router.get('/health', (_req, res) => {
@@ -20,8 +22,10 @@ router.get('/health', (_req, res) => {
     model_ready: mlPredictor.isModelReady(),
     rag_ready: ragRetriever.isReady(),
     rag_status: ragRetriever.info().status,
-    gemini_configured: Boolean(gemini),
-    gemini_model: gemini ? gemini.modelName : null,
+    gemini_configured: Boolean(process.env.GEMINI_API_KEY),
+    gemini_model: process.env.GEMINI_API_KEY ? llm.modelName : null,
+    llm_configured: Boolean(llm),
+    llm_chain: llm ? llm.providers : [],
     sites_count: store.sites.length,
     plants_count: store.plants.length,
   });

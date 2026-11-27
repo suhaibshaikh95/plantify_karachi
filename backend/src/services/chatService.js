@@ -7,13 +7,17 @@
  *      plants excluded for them, with reasons (no retrieval needed for these).
  *   3. Generate: Gemini answers ONLY from those passages and that context, and names its sources.
  *
- * No model is trained or fine-tuned. If Gemini is unavailable (no key, error or 15 s timeout) the
- * best-matching passage is returned instead, with a short note. This module never throws.
+ * No model is trained or fine-tuned. The answer is written by Gemini, with optional backups (a second
+ * Gemini model, then Groq) when Gemini fails or hits its limit; see llmProviders.js. If no model can
+ * answer, the best-matching passage is returned instead, with a short note. This module never throws.
  *
  * Request  { question, site_id?, plants?: [scientific names], history?: [{ role, text }],
  *            recommendation?: { top6: [...], excluded: [...], site_salinity? } }
- * Response { answer, source, sources: [titles], mode: 'gemini' | 'fallback' | 'declined' | 'unavailable' }
+ * Response { answer, source, sources: [titles], mode: 'gemini' | 'groq' | 'fallback' | 'declined' | 'unavailable',
+ *            model?: the model that wrote the answer }
  */
+const { createGeminiGenerator, createDefaultGenerator, DEFAULT_GEMINI_MODEL } = require('./llmProviders');
+
 const DEFAULTS = {
   k: 6, // passages retrieved per question
   historyTurns: 6, // previous turns sent to Gemini
@@ -253,56 +257,11 @@ function withTimeout(promiseFactory, ms) {
   return Promise.race([promiseFactory(controller.signal), timeout]).finally(() => clearTimeout(timer));
 }
 
-// ------------------------------------------------------------------ Gemini client
-// gemini-3.5-flash-lite: in testing (27 Nov 2026) it answered every evaluation question in 0.5-1.3 s.
-// gemini-2.5-flash also answered well (~2 s) but its free tier allows only 20 requests a day, and the
-// gemini-3.x Flash models returned 503 "high demand" or took 50-140 s. Override with GEMINI_MODEL.
-const DEFAULT_GEMINI_MODEL = 'gemini-3.5-flash-lite';
-const RETRY_DELAY_MS = 800;
-
-/**
- * True for errors worth one quick retry: the model is momentarily busy (503). Quota errors (429) are not
- * retried: the free tier allows only a few requests per minute, so a retry would just fail again.
- */
-function isBusyError(err) {
-  const text = `${err?.status ?? ''} ${err?.code ?? ''} ${err?.message ?? ''}`;
-  if (/\b429\b|RESOURCE_EXHAUSTED|quota/i.test(text)) return false;
-  return /\b503\b|UNAVAILABLE|overloaded|high demand/i.test(text);
-}
-
-/**
- * Returns generate({ systemInstruction, contents, abortSignal }) -> text, or null when no API key is set.
- * Uses the official @google/genai SDK on the v1beta API: on v1, system instructions are rejected for
- * gemini-2.5-flash and the "-latest" aliases do not exist.
- */
-function createGeminiGenerator({ apiKey = process.env.GEMINI_API_KEY, model = process.env.GEMINI_MODEL } = {}) {
-  if (!apiKey) return null;
-  const { GoogleGenAI } = require('@google/genai');
-  const ai = new GoogleGenAI({ apiKey, httpOptions: { apiVersion: 'v1beta' } });
-  const modelName = model || DEFAULT_GEMINI_MODEL;
-  const call = ({ systemInstruction, contents, abortSignal, temperature }) =>
-    ai.models.generateContent({ model: modelName, contents, config: { systemInstruction, temperature, abortSignal } });
-
-  const generate = async ({ systemInstruction, contents, abortSignal, temperature = DEFAULTS.temperature }) => {
-    let response;
-    try {
-      response = await call({ systemInstruction, contents, abortSignal, temperature });
-    } catch (err) {
-      if (!isBusyError(err) || abortSignal?.aborted) throw err;
-      await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
-      if (abortSignal?.aborted) throw err;
-      response = await call({ systemInstruction, contents, abortSignal, temperature }); // one retry, within the same time limit
-    }
-    return response.text;
-  };
-  generate.modelName = modelName;
-  return generate;
-}
-
 // ------------------------------------------------------------------ service
 /**
  * @param retriever  { search({ question, k, plants, site_id }) -> passages[] }
- * @param generate   Gemini generator from createGeminiGenerator(), or null
+ * @param generate   answer writer from llmProviders.createDefaultGenerator() (Gemini + backups), or null.
+ *                   It may return the text, or { text, provider, model }.
  * @param store      data store (sitesById, plantsBySciName) for the user's site profile
  */
 function createChatService({ retriever, generate = null, store = null, options = {} } = {}) {
@@ -323,7 +282,8 @@ function createChatService({ retriever, generate = null, store = null, options =
             }),
           opt.rewriteTimeoutMs,
         );
-        if (clean(english)) query = `${clean(english)} (${query})`;
+        const englishText = typeof english === 'string' ? english : english?.text;
+        if (clean(englishText)) query = `${clean(englishText)} (${query})`;
       } catch {
         /* keep the original question */
       }
@@ -383,27 +343,36 @@ function createChatService({ retriever, generate = null, store = null, options =
         return { status: 200, body: { answer: DECLINE_MESSAGE, source: null, sources: [], mode: 'declined' } };
       }
 
-      if (!generate) return { status: 200, body: fallback(req, passages, 'no GEMINI_API_KEY set') };
+      if (!generate) return { status: 200, body: fallback(req, passages, 'no GEMINI_API_KEY or GROQ_API_KEY set') };
 
       const contents = [
         ...req.history.slice(-opt.historyTurns).map((t) => ({ role: t.role === 'assistant' ? 'model' : 'user', parts: [{ text: t.text }] })),
         { role: 'user', parts: [{ text: buildPrompt(req.question, passages, userContext(req, store)) }] },
       ];
       let text;
+      let provider = generate.provider || 'gemini';
+      let model = generate.modelName || null;
       try {
-        text = await withTimeout(
+        const out = await withTimeout(
           (abortSignal) => generate({ systemInstruction: SYSTEM_INSTRUCTION, contents, abortSignal, temperature: opt.temperature }),
-          opt.timeoutMs,
+          options.timeoutMs || generate.timeoutMs || opt.timeoutMs,
         );
+        if (out && typeof out === 'object') {
+          text = out.text;
+          provider = out.provider || provider;
+          model = out.model || model;
+        } else {
+          text = out;
+        }
       } catch (err) {
-        console.warn(`[chat] Gemini failed: ${err.message}`);
-        return { status: 200, body: fallback(req, passages, `Gemini error: ${err.message}`) };
+        console.warn(`[chat] no model answered: ${err.message}`);
+        return { status: 200, body: fallback(req, passages, `model error: ${err.message}`) };
       }
-      if (!clean(text)) return { status: 200, body: fallback(req, passages, 'Gemini returned an empty answer') };
+      if (!clean(text)) return { status: 200, body: fallback(req, passages, 'the model returned an empty answer') };
 
       const { answer: reply, titles } = extractSources(text, passages);
       const sources = titles.length ? titles : passages.slice(0, 2).map((p) => p.title);
-      return { status: 200, body: { answer: reply || clean(text), source: sources.join('; ') || null, sources, mode: 'gemini' } };
+      return { status: 200, body: { answer: reply || clean(text), source: sources.join('; ') || null, sources, mode: provider, model } };
     } catch (err) {
       console.error(`[chat] unexpected error: ${err.stack || err.message}`);
       return { status: 200, body: { answer: UNAVAILABLE_MESSAGE, source: null, sources: [], mode: 'unavailable' } };
@@ -416,6 +385,7 @@ function createChatService({ retriever, generate = null, store = null, options =
 module.exports = {
   createChatService,
   createGeminiGenerator,
+  createDefaultGenerator,
   DEFAULT_GEMINI_MODEL,
   SYSTEM_INSTRUCTION,
   DECLINE_MESSAGE,

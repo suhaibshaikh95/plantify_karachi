@@ -2,7 +2,7 @@
 /**
  * Runs 20 fixed questions against the REAL chat API and saves the results for the report.
  *
- *   npm start                 (in one terminal: the backend, with GEMINI_API_KEY set)
+ *   npm start                 (in one terminal: the backend, with GEMINI_API_KEY and/or GROQ_API_KEY set)
  *   npm run eval:chat         (in another: writes tests/chat_eval_results.md;
  *                              without GEMINI_API_KEY it writes tests/chat_eval_results_no_llm.md instead)
  *
@@ -79,7 +79,9 @@ const cell = (s) => oneLine(s).replace(/\|/g, '\\|');
 
 async function main() {
   const health = await fetch(`${API}/api/health`).then((r) => r.json());
-  console.log(`API ${API}: rag_ready=${health.rag_ready}, gemini=${health.gemini_configured ? health.gemini_model : 'not configured'}`);
+  const llmOn = Boolean(health.llm_configured ?? health.gemini_configured);
+  const chain = (health.llm_chain && health.llm_chain.length ? health.llm_chain : [health.gemini_model]).join(' -> ');
+  console.log(`API ${API}: rag_ready=${health.rag_ready}, models=${llmOn ? chain : 'not configured'}`);
   if (!health.rag_ready) console.warn('WARNING: retrieval worker not ready; answers will be degraded.');
 
   const rec = await post('/api/recommend', SCENARIO);
@@ -92,9 +94,9 @@ async function main() {
   console.log(`Site: ${rec.site.label} (${rec.distance_km} km); top 6: ${recommendation.top6.map((p) => p.common_name).join(', ')}\n`);
 
   const rows = [];
-  if (health.gemini_configured && DELAY_MS) console.log(`Waiting ${DELAY_MS / 1000} s between questions (Gemini free-tier rate limit).\n`);
+  if (llmOn && DELAY_MS) console.log(`Waiting ${DELAY_MS / 1000} s between questions (Gemini free-tier rate limit).\n`);
   for (const [i, [category, question]] of QUESTIONS.entries()) {
-    if (i > 0 && health.gemini_configured) await sleep(DELAY_MS);
+    if (i > 0 && llmOn) await sleep(DELAY_MS);
     const t0 = performance.now();
     let data;
     try {
@@ -104,7 +106,7 @@ async function main() {
     }
     const ms = Math.round(performance.now() - t0);
     rows.push({ n: i + 1, category, question, ms, ...data });
-    console.log(`#${i + 1} [${category}] ${question}\n   (${ms} ms, ${data.mode}) ${oneLine(data.answer)}\n   Sources: ${data.source || '-'}\n`);
+    console.log(`#${i + 1} [${category}] ${question}\n   (${ms} ms, ${data.mode}${data.model ? ` ${data.model}` : ''}) ${oneLine(data.answer)}\n   Sources: ${data.source || '-'}\n`);
   }
 
   const modes = rows.reduce((m, r) => ({ ...m, [r.mode]: (m[r.mode] || 0) + 1 }), {});
@@ -115,7 +117,7 @@ async function main() {
     `- Date: ${new Date().toISOString().replace('T', ' ').slice(0, 16)} UTC`,
     `- API: ${API}`,
     `- Retrieval: BAAI/bge-small-en-v1.5 embeddings + FAISS IndexFlatIP (top 6 passages), worker ready: ${health.rag_ready}`,
-    `- Generation: ${health.gemini_configured ? `Gemini \`${health.gemini_model}\`, temperature 0.2` : 'none (no GEMINI_API_KEY): best-passage fallback'}`,
+    `- Generation: ${llmOn ? `\`${chain}\` (first that answers), temperature 0.2` : 'none (no GEMINI_API_KEY / GROQ_API_KEY): best-passage fallback'}`,
     `- Scenario: ${SCENARIO_TEXT}`,
     `- Matched site: ${rec.site.label} (site ${rec.site.site_id}, ${rec.distance_km} km away); salinity used: class ${rec.site_salinity}; ranked by: ${rec.source}`,
     `- Top 6: ${recommendation.top6.map((p) => p.common_name).join(', ')}`,
@@ -125,9 +127,9 @@ async function main() {
     '',
     '## Summary',
     '',
-    '| # | Category | Question | Mode | Time (ms) | Sources |',
-    '|---|---|---|---|---|---|',
-    ...rows.map((r) => `| ${r.n} | ${r.category} | ${cell(r.question)} | ${r.mode} | ${r.ms} | ${cell(r.source || '—')} |`),
+    '| # | Category | Question | Mode | Model | Time (ms) | Sources |',
+    '|---|---|---|---|---|---|---|',
+    ...rows.map((r) => `| ${r.n} | ${r.category} | ${cell(r.question)} | ${r.mode} | ${r.model || '—'} | ${r.ms} | ${cell(r.source || '—')} |`),
     '',
     '## Answers',
     '',
@@ -142,7 +144,7 @@ async function main() {
       '',
     ]),
   ].join('\n');
-  const out = outFile(Boolean(health.gemini_configured));
+  const out = outFile(llmOn);
   fs.writeFileSync(out, md);
   console.log(`Saved ${path.relative(process.cwd(), out)}`);
 }

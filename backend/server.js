@@ -4,7 +4,7 @@ const paths = require('./src/config/paths');
 const apiRoutes = require('./src/routes/apiRoutes');
 const { mlPredictor } = require('./src/services/mlPredictor');
 const { ragRetriever } = require('./src/services/ragRetriever');
-const { DEFAULT_GEMINI_MODEL } = require('./src/services/chatService');
+const { createDefaultGenerator } = require('./src/services/llmProviders');
 
 const app = express();
 const PORT = Number(process.env.PORT) || 8000;
@@ -53,7 +53,8 @@ async function start() {
     const info = ragRetriever.info();
     console.log(`Chat retrieval worker (FAISS): ${ok ? 'READY' : `UNAVAILABLE (${info.reason})`}`);
   });
-  console.log(`Chat generation (Gemini): ${process.env.GEMINI_API_KEY ? `configured (${process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL})` : 'no GEMINI_API_KEY — chat answers with the best passage only'}`);
+  const llm = createDefaultGenerator();
+  console.log(`Chat generation: ${llm ? llm.providers.join(' -> ') : 'no GEMINI_API_KEY or GROQ_API_KEY — chat answers with the best passage only'}`);
   return app.listen(PORT, () => {
     console.log(`Plantify Karachi Node.js backend running at http://localhost:${PORT}`);
     console.log('Loading the XGBoost model and the chat retrieval worker in the background...');
