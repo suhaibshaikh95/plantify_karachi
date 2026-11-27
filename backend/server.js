@@ -43,7 +43,11 @@ app.use((err, _req, res, _next) => {
 
 async function start() {
   // Warm up Python XGBoost worker on startup (falls back gracefully if Python ML libs are absent)
-  const mlReady = await mlPredictor.init();
+  // XGBoost worker: loads in the background (the first import can be slow on Windows); until it is
+  // ready, /api/recommend uses rule scores.
+  mlPredictor.init().then((ok) => {
+    console.log(`XGBoost worker (.joblib): ${ok ? 'READY' : `UNAVAILABLE, using rule-score fallback (${mlPredictor.reason})`}`);
+  });
   // Chat retrieval worker (BGE-small + FAISS): starts in the background; the first run may download the model.
   ragRetriever.init().then((ok) => {
     const info = ragRetriever.info();
@@ -52,7 +56,7 @@ async function start() {
   console.log(`Chat generation (Gemini): ${process.env.GEMINI_API_KEY ? `configured (${process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL})` : 'no GEMINI_API_KEY — chat answers with the best passage only'}`);
   return app.listen(PORT, () => {
     console.log(`Plantify Karachi Node.js backend running at http://localhost:${PORT}`);
-    console.log(`XGBoost worker (.joblib): ${mlReady ? 'READY' : `UNAVAILABLE, using rule-score fallback (${mlPredictor.reason})`}`);
+    console.log('Loading the XGBoost model and the chat retrieval worker in the background...');
   });
 }
 

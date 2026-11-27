@@ -110,6 +110,11 @@ show the state of each part: `model_ready` (XGBoost), `rag_ready` (chat retrieva
 If a part is unavailable, the log says why and which Python it tried. Recommendations then fall back to
 rule scores and chat to the best passage.
 
+Both Python workers load in the background, so the server answers at once. On Windows the first import
+of numpy / scikit-learn / xgboost (with antivirus scanning) can take a minute or more: until the model
+is ready, `/api/recommend` waits up to 20 s (`ML_REQUEST_WAIT_MS`) and then uses rule scores for that
+request; the log prints `XGBoost worker (.joblib): READY` when it is ready.
+
 ### Windows setup (one time)
 
 ```powershell

@@ -4,8 +4,12 @@ const paths = require('../config/paths');
 const store = require('../data/store');
 const { resolvePythonBin } = require('../config/python');
 
-// Loading xgboost can take well over 5 s on a laptop's first start.
-const STARTUP_TIMEOUT_MS = Number(process.env.ML_STARTUP_TIMEOUT_MS) || 30000;
+// The first import of numpy / scikit-learn / xgboost on Windows (with antivirus scanning) can take
+// a minute or more, so the worker loads in the background with a generous limit...
+const STARTUP_TIMEOUT_MS = Number(process.env.ML_STARTUP_TIMEOUT_MS) || 600000;
+// ...and a recommendation that arrives while it is still loading waits at most this long, then uses
+// rule scores for that one request (the worker keeps loading for the next ones).
+const REQUEST_WAIT_MS = Number(process.env.ML_REQUEST_WAIT_MS) || 20000;
 
 const MISSING_VALUE = -1;
 
@@ -162,7 +166,7 @@ class MlPredictor {
   async predictBatch(site, userFeatures, eligiblePlants) {
     if (!eligiblePlants.length) return { source: 'model', probabilities: [] };
 
-    const ok = await this.init();
+    const ok = this.ready || (await Promise.race([this.init(), new Promise((r) => setTimeout(() => r(false), REQUEST_WAIT_MS))]));
     if (!ok || !this.worker) {
       return { source: 'rules_fallback', probabilities: null };
     }
