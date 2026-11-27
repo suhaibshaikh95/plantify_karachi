@@ -13,7 +13,7 @@ and the app shows that message.
 | `GET /api/sites` | Location page, "choose your area" list | The 104 Karachi reference sites |
 | `POST /api/nearest-site` | Location page (photo GPS, current location, map pin) | Nearest site to a point |
 | `POST /api/recommend` | Results page | Top 6 plants + excluded plants |
-| `POST /api/chat` | Chat page | Answer a question (backend returns `501` for now) |
+| `POST /api/chat` | Chat page | Answer a question about the user's plants (RAG assistant) |
 | `GET /static/photos/<file>` | Plant cards | Plant photos (URL comes in each plant's `photo.url`) |
 
 Not used by the frontend yet: `GET /api/health`, `GET /api/plants`, `GET /api/model/info`.
@@ -103,13 +103,45 @@ How the app displays them (`recommendationMapper.js`):
 
 ## `POST /api/chat`
 
-Request:
+A retrieval-augmented assistant (backend `src/services/chatService.js`): the question is embedded with
+BGE-small, the 6 most similar passages (species data, site data, Karachi planting guide, project FAQ)
+are retrieved from a FAISS index, and Gemini answers only from those passages plus the user's own
+recommendation, naming its sources.
+
+Request sent by the chat page (`askPlantQuestion` + `chatRecommendation` in `src/services/plantifyApi.js`):
+
 ```json
-{ "question": "How often should I water it?", "site_id": 77, "plants": ["Phoenix dactylifera", "…"], "history": [{ "role": "user", "text": "…" }] }
+{
+  "question": "How often should I water it?",
+  "site_id": 77,
+  "plants": ["Phoenix dactylifera", "…"],
+  "history": [{ "role": "user", "text": "…" }, { "role": "assistant", "text": "…" }],
+  "recommendation": {
+    "top6": [{ "scientific_name": "Phoenix dactylifera", "common_name": "Date palm", "probability": 0.98, "score": 100 }],
+    "excluded": [{ "scientific_name": "Conocarpus erectus", "common_name": "Buttonwood", "code": "do_not_plant", "reason": "…" }],
+    "site_salinity": 1
+  }
+}
 ```
 
-Expected response once the backend implements it: `{ "answer": "…", "source": "…" }` (`source` optional).
-Until then the backend returns `501`, and the app replies "The plant chat is not available yet."
+`recommendation` is optional (older clients that send only `question`, `site_id`, `plants` and
+`history` still work); it lets the assistant explain why a plant was excluded and never suggest one.
+The app takes it from the saved `/api/recommend` result.
+
+Response:
+
+```json
+{ "answer": "Water date palm about once a week once it is established…", "source": "Plant: Date palm (Phoenix dactylifera); Your recommendation", "sources": ["…"], "mode": "gemini" }
+```
+
+| Field | Shown as |
+|---|---|
+| `answer` | The assistant's chat bubble (in the user's language: English, Urdu or Roman Urdu) |
+| `source` | "From: …" under the bubble (titles of the passages used) |
+| `mode` | Not shown. `gemini` normal answer, `fallback` best passage when Gemini is unavailable, `declined` off-topic question, `unavailable` retrieval down |
+
+The endpoint always answers with `200`, except `400` for an empty question. The app still shows
+"The plant chat is not available yet" if a server returns `501` (older backends).
 
 ---
 
@@ -117,6 +149,5 @@ Until then the backend returns `501`, and the app replies "The plant chat is not
 
 - **Karachi check**: `/api/nearest-site` and `/api/recommend` accept any point on Earth. Returning
   `422 { "error": "Plantify only covers Karachi." }` for far-away points would let the app block them.
-- **Chat**: implement `POST /api/chat` with the request/response above; the chat screen is ready.
 - **Weather tip** (optional): the old app showed "Today 36 °C, no rain…". If wanted, add
   `"weather": { "headline": "…", "tip": "…" }` to the `/api/recommend` response and the app can show it.

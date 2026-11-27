@@ -4,12 +4,18 @@
   "description": "Node.js Express backend for Plantify Karachi (React + Hybrid ML Recommendation Engine)",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --env-file-if-exists=.env --watch server.js",
+    "build:knowledge": "node --env-file-if-exists=.env scripts/build_knowledge.js",
+    "test": "node --test tests/*.test.js",
+    "eval:chat": "node --env-file-if-exists=.env scripts/eval_chat.js"
   },
   "dependencies": {
+    "@google/genai": "3.3.0",
     "cors": "^2.8.5",
     "express": "^4.21.2"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
-

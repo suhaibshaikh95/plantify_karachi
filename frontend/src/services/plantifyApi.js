@@ -17,10 +17,28 @@ export function getRecommendations(body) {
   return request('/api/recommend', { method: 'POST', body });
 }
 
-/** POST /api/chat: answer a question about the recommended plants. */
-export function askPlantQuestion({ question, siteId, plants, history }) {
+/**
+ * POST /api/chat: answer a question about the recommended plants (RAG assistant).
+ * `recommendation` (optional) gives the assistant the user's current top 6 and excluded plants.
+ */
+export function askPlantQuestion({ question, siteId, plants, history, recommendation }) {
   return request('/api/chat', {
     method: 'POST',
-    body: { question, site_id: siteId, plants, history },
+    body: { question, site_id: siteId, plants, history, ...(recommendation ? { recommendation } : {}) },
   });
+}
+
+/** The compact recommendation context sent with chat questions, taken from a saved /api/recommend result. */
+export function chatRecommendation(result) {
+  if (!result) return undefined;
+  return {
+    top6: (result.recommendations || []).map(({ scientific_name, common_name, probability, score }) => ({
+      scientific_name,
+      common_name,
+      probability,
+      score,
+    })),
+    excluded: (result.excluded || []).map(({ scientific_name, common_name, code, reason }) => ({ scientific_name, common_name, code, reason })),
+    site_salinity: result.site_salinity,
+  };
 }

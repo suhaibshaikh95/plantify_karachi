@@ -5,7 +5,7 @@ import PageHeader from '../components/layout/PageHeader';
 import ChatMessage from '../features/chat/ChatMessage';
 import ChatComposer from '../features/chat/ChatComposer';
 import { usePlan } from '../context/PlanContext';
-import { askPlantQuestion } from '../services/plantifyApi';
+import { askPlantQuestion, chatRecommendation } from '../services/plantifyApi';
 import { CHAT_SUGGESTIONS } from '../constants/questions';
 import { ROUTES } from '../constants/routes';
 import styles from './ChatPage.module.css';
@@ -32,9 +32,10 @@ export default function ChatPage() {
     try {
       const res = await askPlantQuestion({
         question,
-        siteId: plan.location?.site?.site_id ?? plan.result.site?.site_id ?? null,
+        siteId: plan.result.site?.site_id ?? plan.location?.site?.site_id ?? null,
         plants: plants.map((p) => p.scientific_name),
         history,
+        recommendation: chatRecommendation(plan.result),
       });
       addChat({ role: 'assistant', text: res.answer, source: res.source || null });
     } catch (err) {

@@ -3,8 +3,14 @@ const store = require('../data/store');
 const { findNearestSite } = require('../services/geoService');
 const { recommendPlants, formatDisplayName, formatPlantPhoto } = require('../services/hybridEngine');
 const { mlPredictor } = require('../services/mlPredictor');
+const { ragRetriever } = require('../services/ragRetriever');
+const { createChatService, createGeminiGenerator } = require('../services/chatService');
 
 const router = express.Router();
+
+// Chat assistant (RAG): BGE-small + FAISS retrieval, Gemini generation. See services/chatService.js.
+const gemini = createGeminiGenerator();
+const chatService = createChatService({ retriever: ragRetriever, generate: gemini, store });
 
 // 1. GET /api/health
 router.get('/health', (_req, res) => {
@@ -12,6 +18,10 @@ router.get('/health', (_req, res) => {
     status: 'ok',
     service: 'plantify-karachi-api',
     model_ready: mlPredictor.isModelReady(),
+    rag_ready: ragRetriever.isReady(),
+    rag_status: ragRetriever.info().status,
+    gemini_configured: Boolean(gemini),
+    gemini_model: gemini ? gemini.modelName : null,
     sites_count: store.sites.length,
     plants_count: store.plants.length,
   });
@@ -84,12 +94,13 @@ router.post('/recommend', async (req, res, next) => {
   }
 });
 
-// 7. POST /api/chat (Pending — Phase 2)
-router.post('/chat', (_req, res) => {
-  res.status(501).json({
-    error: 'Chatbot endpoint is pending (Phase 2).',
-    status: 'pending',
-  });
+// 7. POST /api/chat — RAG chat assistant
+// Body: { question, site_id?, plants?, history?, recommendation?: { top6, excluded, site_salinity? } }
+// Reply: { answer, source, sources, mode }. Degrades to a passage answer when Gemini is unavailable;
+// only an empty question gets an error (400).
+router.post('/chat', async (req, res) => {
+  const { status, body } = await chatService.answer(req.body || {});
+  res.status(status).json(body);
 });
 
 module.exports = router;

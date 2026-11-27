@@ -19,3 +19,7 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Local secrets (backend/.env holds GEMINI_API_KEY)
+.env
+.env.local
